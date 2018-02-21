@@ -4,6 +4,11 @@
 #include <FEHMotor.h>
 #include <FEHServo.h>
 #include <FEHRPS.h>
+#include <math.h>
+
+#define START 1.5 //define the threshold which signifies the starting light turning on
+//#define BLUE
+//#define RED
 
 //Global Objects
 FEHMotor rightMotor(FEHMotor::Motor0,9);
@@ -22,15 +27,19 @@ AnalogInputPin CdSCell(FEHIO::P0_2);
 void driveStraight(int percent);
 void getWorldState(int *rEncVal, int *lEncVal, double *CdSVal);
 void resetEncoders();
-void moveForwardDist(int percent, int distance); //using encoders
-void turn(int percent, int counts);
+void move_forward(int distance); //using encoders
+void turn(int degrees);
+
+//Global Variables
+//Input standard motor power levels here
+int motor_percent = 30;
+int right_motor_percent = 30;
+int left_motor_percent = 30;
+int motor_percent_turn = 15;
+int counts;
 
 int main(void)
 {
-    int motor_percent = 30; //Input power level here
-        int distance = 9; //Input desired distance in inches here
-        int expected_counts;
-
         float x, y; //for touch screen
 
         //Initialize the screen
@@ -42,116 +51,79 @@ int main(void)
         while(!LCD.Touch(&x,&y)); //Wait for screen to be pressed
         while(LCD.Touch(&x,&y)); //Wait for screen to be unpressed
 
-        //Declare a CdS cell sensor as an analog input and assign it to an IO port
-        AnalogInputPin CdS_cell(FEH::P0_3);
-
         //wait for CdS cell to start
-        while(CdS_cell.Value()<1.5);
+        //while(CdSCell.Value()<1.5);
 
-        move_forward(motor_percent, distance); //see function
+        move_forward(9); //move forward
         Sleep(1.0);
 
-        //reset inputs to turn right
-        motor_percent=15;
-        expected_counts=222;
-        turn(motor_percent, expected_counts);
+        //turn 90 degrees clockwise
+        turn(90);
         Sleep(1.0);
 
-        //reset inputs to move forward
-        motor_percent=30;
-        distance=8;
-        move_forward(motor_percent, distance);
+        //move forward
+        move_forward(8);
         Sleep(1.0);
 
-        //reset inputs to turn left
-        motor_percent=-15;
-        expected_counts=222;
-        turn(motor_percent, expected_counts);
+        //turn 90 degrees counterclockwise
+        turn(-90);
         Sleep(1.0);
 
-        //reset inputs to move forward
-        motor_percent=30;
-        distance=17;
-        move_forward(motor_percent, distance);
+        //move forward
+        move_forward(17);
         Sleep(1.0);
 
-        //reset inputs to turn left
-        motor_percent=-15;
-        expected_counts=222;
-        turn(motor_percent, expected_counts);
+        //turn 90 degrees counterclockwise
+        turn(-90);
         Sleep(1.0);
 
-        //reset inputs to move forward
-        motor_percent=30;
-        distance=1;
-        move_forward(motor_percent, distance);
+        //move forward
+        move_forward(1);
         Sleep(1.0);
 
-        //reset inputs to move backward
-        motor_percent=-30;
-        distance=2;
-        move_forward(motor_percent, distance);
+        //move backward
+        move_forward(-2);
         Sleep(1.0);
 
-        //reset inputs to turn left
-        motor_percent=-15;
-        expected_counts=222;
-        turn(motor_percent, expected_counts);
+        //turn 90 degrees counterclockwise
+        turn(-90);
         Sleep(1.0);
 
-        //reset inputs to move forward
-        motor_percent=30;
-        distance=16;
-        move_forward(motor_percent, distance);
+        //move forward
+        move_forward(16);
         Sleep(1.0);
 
-        //reset inputs to turn right
-        motor_percent=15;
-        expected_counts=222;
-        turn(motor_percent, expected_counts);
+        //turn 90 degrees clockwise
+        turn(90);
         Sleep(1.0);
 
-        //reset inputs to move forward
-        motor_percent=30;
-        distance=19;
-        move_forward(motor_percent, distance);
+        //move forward
+        move_forward(19);
         Sleep(1.0);
 
-        //reset inputs to turn right
-        motor_percent=15;
-        expected_counts=222;
-        turn(motor_percent, expected_counts);
+        //turn 90 degrees clockwise
+        turn(90);
         Sleep(1.0);
 
-        //reset inputs to move forward
-        motor_percent=30;
-        distance=3;
-        move_forward(motor_percent, distance);
+        //move forward
+        move_forward(3);
         Sleep(1.0);
 
-        //reset inputs to turn 30 degrees right
-        motor_percent=15;
-        expected_counts=74;
-        turn(motor_percent, expected_counts);
+        //turn 30 degrees clockwise
+        turn(30);
         Sleep(1.0);
 
-        //reset inputs to move backward
-        motor_percent=-30;
-        distance=4;
-        move_forward(motor_percent, distance);
+        //move backward
+        move_forward(-4);
         Sleep(1.0);
 
-        //reset inputs to turn 30 degrees left
-        motor_percent=-15;
-        expected_counts=74;
-        turn(motor_percent, expected_counts);
+        //turn 30 degrees counterclockwise
+        turn(-30);
         Sleep(1.0);
 
-        //reset inputs to move backward
-        motor_percent=-30;
-        distance=18;
-        move_forward(motor_percent, distance);
-        Sleep(1.0);
+        //move backward
+        move_forward(-18);
+        Sleep(10.0);
 
     return 0;
 }
@@ -163,12 +135,12 @@ void driveStraight(int percent) {
     leftMotor.SetPercent(percent);
 }
 
-void getWorldState(int *rEncVal, int *lEncVal, double *CdSVal) {
+/*void getWorldState(int *rEncVal, int *lEncVal, double *CdSVal) {
     //Reads current data from all input sources and sends them to main via pointers
     &rEncVal = rightEnc.Counts();
     &lEncVal = leftEnc.Counts();
     &CdSVal = CdSCell.Value();
-}
+}*/
 
 void resetEncoders() {
     //Sets both encoders counts to 0
@@ -176,46 +148,68 @@ void resetEncoders() {
     leftEnc.ResetCounts();
 }
 
-void moveForwardDist(int percent, int distance) //using encoders
+void move_forward(int distance) //using encoders
 {
-    //convert inputed distance to counts
-    counts=distance*40.409;
+    //convert inputed distance (abs val) to counts
+    counts = sqrt(distance*distance)*40.409;
 
     //Reset encoder counts
-    right_encoder.ResetCounts();
-    left_encoder.ResetCounts();
+    resetEncoders();
 
-    //Set both motors to desired percent
-    right_motor.SetPercent(percent);
-    left_motor.SetPercent(percent);
+    //determine if driving forwards or backwards
+    if (distance >= 0) //forwards
+    {
+        //Set both motors to desired percent
+        rightMotor.SetPercent(motor_percent);
+        leftMotor.SetPercent(motor_percent);
+    }
+
+    else //backwards
+    {
+        //Set both motors to desired percent
+        rightMotor.SetPercent(-motor_percent);
+        leftMotor.SetPercent(-motor_percent);
+    }
 
 
 
     //While the average of the left and right encoder is less than counts,
     //keep running motors
-    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
+    while((leftEnc.Counts() + rightEnc.Counts()) / 2. < counts);
 
     //Turn off motors
-    right_motor.Stop();
-    left_motor.Stop();
+    rightMotor.Stop();
+    leftMotor.Stop();
 }
 
-void turn(int percent, int counts) //using encoders
+void turn(int degrees) //using encoders
 {
     //Reset encoder counts
-    right_encoder.ResetCounts();
-    left_encoder.ResetCounts();
+    resetEncoders();
 
+    //detect whether turning clockwise or counterclockwise
+    if (degrees >=0) //clockwise
+    {
     //Set both motors to desired percent
-    right_motor.SetPercent((-1)*(percent+1));
-    left_motor.SetPercent(percent);
+    rightMotor.SetPercent((-1)*(motor_percent_turn));
+    leftMotor.SetPercent(motor_percent_turn);
+    }
 
+    else //counterclockwise
+    {
+        //Set both motors to desired percent
+        rightMotor.SetPercent(motor_percent_turn);
+        leftMotor.SetPercent((-1)*(motor_percent_turn));
+    }
+
+    //determine the number of counts
+    counts = 6.17*sqrt(degrees*degrees);
 
     //While the average of the left and right encoder is less than counts,
     //keep running motors
-    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
+    while((leftEnc.Counts() + rightEnc.Counts()) / 2. < counts);
 
     //Turn off motors
-    right_motor.Stop();
-    left_motor.Stop();
+    rightMotor.Stop();
+    leftMotor.Stop();
 }
