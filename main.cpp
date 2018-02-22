@@ -33,8 +33,8 @@ void turn(int degrees);
 //Global Variables
 //Input standard motor power levels here
 int motor_percent = 30;
-int right_motor_percent = 30;
-int left_motor_percent = 30;
+int right_motor_percent = -motor_percent;
+int left_motor_percent = motor_percent;
 int motor_percent_turn = 15;
 int counts;
 
@@ -46,13 +46,10 @@ int main(void)
         LCD.Clear(BLACK);
         LCD.SetFontColor(WHITE);
 
-        LCD.WriteLine("Shaft Encoder Exploration Test");
-        LCD.WriteLine("Touch the screen");
-        while(!LCD.Touch(&x,&y)); //Wait for screen to be pressed
-        while(LCD.Touch(&x,&y)); //Wait for screen to be unpressed
+        LCD.WriteLine("Code has begun");
 
         //wait for CdS cell to start
-        //while(CdSCell.Value()<1.5);
+        while(CdSCell.Value()>1.5);
 
         move_forward(9); //move forward
         Sleep(1.0);
@@ -123,7 +120,7 @@ int main(void)
 
         //move backward
         move_forward(-18);
-        Sleep(10.0);
+        Sleep(1.0);
 
     return 0;
 }
@@ -160,15 +157,15 @@ void move_forward(int distance) //using encoders
     if (distance >= 0) //forwards
     {
         //Set both motors to desired percent
-        rightMotor.SetPercent(motor_percent);
-        leftMotor.SetPercent(motor_percent);
+        rightMotor.SetPercent(right_motor_percent);
+        leftMotor.SetPercent(left_motor_percent);
     }
 
     else //backwards
     {
         //Set both motors to desired percent
-        rightMotor.SetPercent(-motor_percent);
-        leftMotor.SetPercent(-motor_percent);
+        rightMotor.SetPercent(-right_motor_percent);
+        leftMotor.SetPercent(-left_motor_percent);
     }
 
 
