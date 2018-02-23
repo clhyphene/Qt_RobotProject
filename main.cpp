@@ -141,7 +141,7 @@ int main(void)
         motor_percent_turn = 60;
         turn(360);
         Sleep(.5);
-        motor_percent_turn = 27;
+        motor_percent_turn = 28;
         turn(30);
         turn(-30);
         turn(30);
