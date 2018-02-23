@@ -21,22 +21,24 @@ FEHServo buttonServo(FEHServo::Servo0);
 FEHServo rotateServo(FEHServo::Servo1);
 FEHServo liftServo(FEHServo::Servo2);
 
-AnalogInputPin CdSCell(FEHIO::P0_2);
+AnalogInputPin CdSCell(FEHIO::P3_7);
 
 //Function Prototypes
 void driveStraight(int percent);
 void getWorldState(int *rEncVal, int *lEncVal, double *CdSVal);
 void resetEncoders();
-void move_forward(int distance); //using encoders
+void move_forward(float distance); //using encoders
 void turn(int degrees);
 
 //Global Variables
 //Input standard motor power levels here
-int motor_percent = 30;
+int motor_percent = 40;
 int right_motor_percent = -motor_percent;
 int left_motor_percent = motor_percent;
-int motor_percent_turn = 15;
-int counts;
+int motor_percent_turn = 28;
+int left_motor_percent_turn = motor_percent_turn;
+int right_motor_percent_turn = -motor_percent_turn;
+float counts;
 
 int main(void)
 {
@@ -49,84 +51,115 @@ int main(void)
         LCD.WriteLine("Code has begun");
 
         //wait for CdS cell to start
-        while(CdSCell.Value()>1.5);
+        while(CdSCell.Value()>START);
 
-        move_forward(9); //move forward
-        Sleep(1.0);
 
-        //turn 90 degrees clockwise
-        turn(90);
-        Sleep(1.0);
-
-        //move forward
-        move_forward(8);
-        Sleep(1.0);
-
-        //turn 90 degrees counterclockwise
-        turn(-90);
-        Sleep(1.0);
-
-        //move forward
-        move_forward(17);
-        Sleep(1.0);
-
-        //turn 90 degrees counterclockwise
-        turn(-90);
-        Sleep(1.0);
-
-        //move forward
-        move_forward(1);
-        Sleep(1.0);
-
-        //move backward
-        move_forward(-2);
-        Sleep(1.0);
-
-        //turn 90 degrees counterclockwise
-        turn(-90);
-        Sleep(1.0);
-
-        //move forward
-        move_forward(16);
-        Sleep(1.0);
+        //move forward 1
+        move_forward(7);
+        Sleep(1.5);
 
         //turn 90 degrees clockwise
         turn(90);
-        Sleep(1.0);
+        Sleep(1.5);
 
-        //move forward
-        move_forward(19);
-        Sleep(1.0);
+        //move forward 2
+        move_forward(9.15);
+        Sleep(1.5);
+
+        //turn 90 degrees counterclockwise
+        turn(-90);
+        Sleep(1.5);
+
+        //move forward 3
+        move_forward(12.6);
+        Sleep(1.5);
+
+        //turn 90 degrees counterclockwise
+        turn(-90);
+        Sleep(1.5);
+
+        //move forward 4
+        move_forward(3.2);
+        Sleep(1.5);
+
+        //move backward 5
+        move_forward(-1.4);
+        Sleep(1.5);
+
+        //turn 90 degrees counterclockwise
+        turn(-90);
+        Sleep(1.5);
+
+        //move forward 6
+        move_forward(12.8);
+        Sleep(1.5);
 
         //turn 90 degrees clockwise
         turn(90);
-        Sleep(1.0);
+        Sleep(1.5);
 
-        //move forward
-        move_forward(3);
-        Sleep(1.0);
+        //move forward 7
+        move_forward(20);
+        Sleep(1.5);
 
-        //turn 30 degrees clockwise
+        //turn 90 degrees clockwise
+        turn(90);
+        Sleep(1.5);
+
+        //move forward 8
+        move_forward(3.75);
+        Sleep(1.5);
+
+        //move backward 9
+        move_forward(-3);
+        Sleep(1.5);
+
+//        //turn 30 degrees clockwise
+//        turn(30);
+//        Sleep(1.5);
+
+//        //move backward 10
+//        move_forward(-4.2);
+//        Sleep (1.5);
+
+//        //turn 30 degrees counterclockwise
+//        turn(-30);
+//        Sleep(1.5);
+
+        //move backward 11
+        motor_percent = 60;
+        move_forward(-22);
+        Sleep(1.5);
+
+        //All done
+        LCD.Clear(GOLDENROD);
+        LCD.SetFontColor(BLACK);
+        LCD.WriteLine("All done !");
+        LCD.WriteLine(" ");
+        LCD.WriteLine("Dance partyyyy");
+        //dance
+        motor_percent_turn = 60;
+        turn(360);
+        Sleep(.5);
+        motor_percent_turn = 28;
         turn(30);
-        Sleep(1.0);
-
-        //move backward
-        move_forward(-4);
-        Sleep(1.0);
-
-        //turn 30 degrees counterclockwise
         turn(-30);
-        Sleep(1.0);
-
-        //move backward
-        move_forward(-18);
-        Sleep(1.0);
+        turn(30);
+        turn(-30);
+        turn(30);
+        turn(-30);
+        turn(30);
+        turn(-30);
+        Sleep(10.0);
 
     return 0;
 }
 
 //Functions
 void driveStraight(int percent) {
+
+    //************WE COULD MAKE THIS DRIVE UNTIL IT HITS SOMETHING**********
+
     //Set both motors to same percentage so they move in the same direction at the same speed
     rightMotor.SetPercent(percent);
     leftMotor.SetPercent(percent);
@@ -145,13 +178,21 @@ void resetEncoders() {
     leftEnc.ResetCounts();
 }
 
-void move_forward(int distance) //using encoders
+void move_forward(float distance) //using encoders
 {
+    //make sure the left and right motor percents are correct
+    right_motor_percent = -motor_percent;
+    left_motor_percent = motor_percent;
+
     //convert inputed distance (abs val) to counts
     counts = sqrt(distance*distance)*40.409;
 
     //Reset encoder counts
     resetEncoders();
+
+    //Prepare to input to the screen
+    LCD.Clear(BLACK);
+    LCD.SetFontColor(WHITE);
 
     //determine if driving forwards or backwards
     if (distance >= 0) //forwards
@@ -159,6 +200,9 @@ void move_forward(int distance) //using encoders
         //Set both motors to desired percent
         rightMotor.SetPercent(right_motor_percent);
         leftMotor.SetPercent(left_motor_percent);
+
+        //Write to the screen
+        LCD.WriteLine("Driving forwards");
     }
 
     else //backwards
@@ -166,6 +210,8 @@ void move_forward(int distance) //using encoders
         //Set both motors to desired percent
         rightMotor.SetPercent(-right_motor_percent);
         leftMotor.SetPercent(-left_motor_percent);
+        //Write to the screen
+        LCD.WriteLine("Driving backwards");
     }
 
 
@@ -181,26 +227,40 @@ void move_forward(int distance) //using encoders
 
 void turn(int degrees) //using encoders
 {
+    //make sure motor percents are at correct values
+    left_motor_percent_turn = motor_percent_turn;
+    right_motor_percent_turn = -motor_percent_turn;
+
     //Reset encoder counts
     resetEncoders();
 
+    //Prepare to input to the screen
+    LCD.Clear(BLACK);
+    LCD.SetFontColor(WHITE);
+
     //detect whether turning clockwise or counterclockwise
-    if (degrees >=0) //clockwise
+    if (degrees >= 0) //clockwise
     {
     //Set both motors to desired percent
-    rightMotor.SetPercent((-1)*(motor_percent_turn));
-    leftMotor.SetPercent(motor_percent_turn);
+    rightMotor.SetPercent(right_motor_percent_turn);
+    leftMotor.SetPercent((-1)*(left_motor_percent_turn));
+
+    //Write to the screen
+    LCD.WriteLine("Turning clockwise");
     }
 
     else //counterclockwise
     {
         //Set both motors to desired percent
-        rightMotor.SetPercent(motor_percent_turn);
-        leftMotor.SetPercent((-1)*(motor_percent_turn));
+        rightMotor.SetPercent((-1)*(right_motor_percent_turn));
+        leftMotor.SetPercent(left_motor_percent_turn);
+
+        //Write to the screen
+        LCD.WriteLine("Turning counterclockwise");
     }
 
     //determine the number of counts
-    counts = 6.17*sqrt(degrees*degrees);
+    counts = 3.53*sqrt(degrees*degrees);
 
     //While the average of the left and right encoder is less than counts,
     //keep running motors
