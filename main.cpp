@@ -20,6 +20,7 @@ DigitalEncoder leftEnc(FEHIO::P0_1);
 FEHServo buttonServo(FEHServo::Servo0);
 FEHServo rotateServo(FEHServo::Servo1);
 FEHServo liftServo(FEHServo::Servo2);
+//Servos turn CCW to 180 when facing the motor
 
 AnalogInputPin CdSCell(FEHIO::P3_7);
 
@@ -44,114 +45,118 @@ float counts;
 
 int main(void)
 {
-        float x, y; //for touch screen
+    //Servo min and max values from calibration
+    buttonServo.SetMin(500);
+    buttonServo.SetMax(2319);
 
-        //Initialize the screen
-        LCD.Clear(BLACK);
-        LCD.SetFontColor(WHITE);
+    float x, y; //for touch screen
 
-        LCD.WriteLine("Code has begun");
+    //Initialize the screen
+    LCD.Clear(BLACK);
+    LCD.SetFontColor(WHITE);
 
-        //wait for CdS cell to start
-        while(CdSCell.Value()>START);
+    LCD.WriteLine("Code has begun");
+
+    //wait for CdS cell to start
+    while(CdSCell.Value()>START);
 
 
-        //move forward 1
-        move_forward(7);
-        Sleep(1.5);
+    //move forward 1
+    move_forward(7);
+    Sleep(1.5);
 
-        //turn 90 degrees clockwise
-        turn(90);
-        Sleep(1.5);
+    //turn 90 degrees clockwise
+    turn(90);
+    Sleep(1.5);
 
-        //move forward 2
-        move_forward(8.275);
-        Sleep(1.5);
+    //move forward 2
+    move_forward(8.275);
+    Sleep(1.5);
 
-        //turn 90 degrees counterclockwise
-        turn(-90);
-        Sleep(1.5);
+    //turn 90 degrees counterclockwise
+    turn(-90);
+    Sleep(1.5);
 
-        //move forward 2.1
-        move_forward(6);
-        Sleep(1.5);
+    //move forward 2.1
+    move_forward(6);
+    Sleep(1.5);
 
-        //turn 90 degrees clockwise
-        turn(90);
-        Sleep(1.5);
+    //turn 90 degrees clockwise
+    turn(90);
+    Sleep(1.5);
 
-        //move forward 2.2
-        move_forward(1.25);
-        Sleep(1.5);
+    //move forward 2.2
+    move_forward(1.25);
+    Sleep(1.5);
 
-        //turn 90 degrees counterclockwise
-        turn(-90);
-        Sleep(1.5);
+    //turn 90 degrees counterclockwise
+    turn(-90);
+    Sleep(1.5);
 
-        //move forward 3
-        move_forward(4.25);
-        Sleep(1.5);
+    //move forward 3
+    move_forward(4.25);
+    Sleep(1.5);
 
-        //turn 90 degrees counterclockwise
-        turn(-90);
-        Sleep(1.5);
+    //turn 90 degrees counterclockwise
+    turn(-90);
+    Sleep(1.5);
 
-        //move forward 4
-        move_forward(3.5);
-        Sleep(1.5);
+    //move forward 4
+    move_forward(3.5);
+    Sleep(1.5);
 
-        //move backward 5
-        move_forward(-1.75);
-        Sleep(1.5);
+    //move backward 5
+    move_forward(-1.75);
+    Sleep(1.5);
 
-        //turn 90 degrees counterclockwise
-        turn(-90);
-        Sleep(1.5);
+    //turn 90 degrees counterclockwise
+    turn(-90);
+    Sleep(1.5);
 
-        //move forward 6
-        move_forward(12.85);
-        Sleep(1.5);
+    //move forward 6
+    move_forward(12.85);
+    Sleep(1.5);
 
-        //turn 90 degrees clockwise
-        turn(90);
-        Sleep(1.5);
+    //turn 90 degrees clockwise
+    turn(90);
+    Sleep(1.5);
 
-        //move forward 7
-        move_forward(20);
-        Sleep(1.5);
+    //move forward 7
+    move_forward(20);
+    Sleep(1.5);
 
-        //turn 90 degrees clockwise
-        turn(90);
-        Sleep(1.5);
+    //turn 90 degrees clockwise
+    turn(90);
+    Sleep(1.5);
 
-        //move forward 8
-        move_forward(4.75);
-        Sleep(1.5);
+    //move forward 8
+    move_forward(4.75);
+    Sleep(1.5);
 
-        //move backward 9
-        move_forward(-3);
-        Sleep(1.5);
+    //move backward 9
+    move_forward(-3);
+    Sleep(1.5);
 
-//        //turn 30 degrees clockwise
-//        turn(30);
-//        Sleep(1.5);
+    //        //turn 30 degrees clockwise
+    //        turn(30);
+    //        Sleep(1.5);
 
-//        //move backward 10
-//        move_forward(-4.2);
-//        Sleep (1.5);
+    //        //move backward 10
+    //        move_forward(-4.2);
+    //        Sleep (1.5);
 
-//        //turn 30 degrees counterclockwise
-//        turn(-30);
-//        Sleep(1.5);
+    //        //turn 30 degrees counterclockwise
+    //        turn(-30);
+    //        Sleep(1.5);
 
-        //move backward 11
-        motor_percent = 60;
-        move_forward(-24);
-        Sleep(1.5);
+    //move backward 11
+    motor_percent = 60;
+    move_forward(-24);
+    Sleep(1.5);
 
-        //All done
-        dance_party();
-        Sleep(10.0);
+    //All done
+    dance_party();
+    Sleep(10.0);
 
     return 0;
 }
@@ -286,12 +291,12 @@ void turn(int degrees) //using encoders
     //detect whether turning clockwise or counterclockwise
     if (degrees >= 0) //clockwise
     {
-    //Set both motors to desired percent
-    rightMotor.SetPercent(right_motor_percent_turn);
-    leftMotor.SetPercent((-1)*(left_motor_percent_turn));
+        //Set both motors to desired percent
+        rightMotor.SetPercent(right_motor_percent_turn);
+        leftMotor.SetPercent((-1)*(left_motor_percent_turn));
 
-    //Write to the screen
-    LCD.WriteLine("Turning clockwise");
+        //Write to the screen
+        LCD.WriteLine("Turning clockwise");
     }
 
     else //counterclockwise
@@ -329,9 +334,9 @@ void dance_turn(int degrees) //using encoders
     //detect whether turning clockwise or counterclockwise
     if (degrees >= 0) //clockwise
     {
-    //Set both motors to desired percent
-    rightMotor.SetPercent(right_motor_percent_turn);
-    leftMotor.SetPercent((-1)*(left_motor_percent_turn));
+        //Set both motors to desired percent
+        rightMotor.SetPercent(right_motor_percent_turn);
+        leftMotor.SetPercent((-1)*(left_motor_percent_turn));
 
     }
 
