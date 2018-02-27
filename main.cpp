@@ -7,8 +7,9 @@
 #include <math.h>
 
 #define START 1.5 //define the threshold which signifies the starting light turning on
-#define BLUE
-#define RED
+#define BLUE 1.03 //recorded using test code
+#define RED 0.42 //recorded using test code
+#define LIGHTTOL 0.2 //tolerance for acceptable voltage values from CdS cell
 
 //Global Objects
 FEHMotor leftMotor(FEHMotor::Motor0,9);
@@ -400,9 +401,9 @@ void performanceTestTwo() {
     int turnDirection = -1;
 
     //Red color will be 0, blue will be 1
-    if (lightColor < (RED+.15) && lightColor > (RED-.15)) {
+    if (lightColor < (RED+LIGHTTOL) && lightColor > (RED-LIGHTTOL)) {
         turnDirection = 0;
-    } else if (lightColor < (BLUE+.15) && lightColor > (BLUE-.15)) {
+    } else if (lightColor < (BLUE+LIGHTTOL) && lightColor > (BLUE-LIGHTTOL)) {
         turnDirection = 1;
     } else {
         LCD.Clear();
