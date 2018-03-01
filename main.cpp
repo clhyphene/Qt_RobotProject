@@ -377,11 +377,13 @@ void performanceTestTwo() {
 
     LCD.WriteLine("Code has begun");
 
+    buttonServo.SetDegree(90);
+
     //wait for CdS cell to start
     while(CdSCell.Value()>START);
 
     //move forward 1
-    drive(8);
+    drive(7.5);
     Sleep(1.5);
 
     //turn 90 degrees CW
