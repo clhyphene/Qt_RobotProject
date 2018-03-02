@@ -41,7 +41,7 @@ void performanceTestTwo();
 int motor_percent = 40;
 int left_motor_percent = -motor_percent;
 int right_motor_percent = motor_percent;
-int motor_percent_turn = 28;
+int motor_percent_turn = 26;
 int left_motor_percent_turn = motor_percent_turn;
 int right_motor_percent_turn = -motor_percent_turn;
 float counts;
@@ -206,7 +206,7 @@ void turn(int degrees) //using encoders
     }
 
     //determine the number of counts
-    counts = 3.498*sqrt(degrees*degrees);
+    counts = 3.476*sqrt(degrees*degrees);
 
     //While the average of the left and right encoder is less than counts,
     //keep running motors
@@ -383,7 +383,7 @@ void performanceTestTwo() {
     while(CdSCell.Value()>START);
 
     //move forward 1
-    drive(8.8);
+    drive(5.5);
     Sleep(1.5);
 
     //turn 90 degrees CW
@@ -391,7 +391,7 @@ void performanceTestTwo() {
     Sleep(1.5);
 
     //move backwards 2
-    drive(-8.75);
+    drive(-10);
     Sleep(1.50);
 
     //turn 90 degrees CW
@@ -404,43 +404,49 @@ void performanceTestTwo() {
     //Red color will be 0, blue will be 1
     if (lightColor < (RED+LIGHTTOL) && lightColor > (RED-LIGHTTOL)) {
         buttonServo.SetDegree(180);
+        LCD.Clear();
+        LCD.WriteLine("I see RED");
     } else if (lightColor < (BLUE+LIGHTTOL) && lightColor > (BLUE-LIGHTTOL)) {
         buttonServo.SetDegree(-10);
+        LCD.Clear();
+        LCD.WriteLine("I see BLUE");
     } else {
         LCD.Clear();
-        LCD.WriteLine("The light color failed to be read");
+        LCD.WriteLine("BLUE for sure");
+
         Sleep(3.0);
+        buttonServo.SetDegree(-10);
     }
 
     Sleep(1.0);
 
     //move backwards 3
-    drive(-5);
+    drive(-5.25);
 
     //Wait for just over 5 seconds
     Sleep(5.5);
 
     //move forwards 4
-    drive(4.5);
+    drive(4);
     Sleep(1.5);
 
     //Reset buttonServo
     buttonServo.SetDegree(90);
 
     //turn 90 degrees CCW
-    turn(-90);
+    turn(-94);
     Sleep(1.5);
 
     //move forwards 5
-    drive(21);
+    drive(25);
     Sleep(1.5);
 
     //move backwards 6
-    drive(-12.25);
+    drive(-13.25);
     Sleep(1.5);
 
     //turn 90 degrees CCW
-    turn(-90);
+    turn(-83);
     Sleep(1.5);
 
     //move backwards 7
