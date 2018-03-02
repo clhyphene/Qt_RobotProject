@@ -9,7 +9,7 @@
 #define START 1.5 //define the threshold which signifies the starting light turning on
 #define BLUE 1.03 //recorded using test code
 #define RED 0.42 //recorded using test code
-#define LIGHTTOL 0.2 //tolerance for acceptable voltage values from CdS cell
+#define LIGHTTOL 0.35 //tolerance for acceptable voltage values from CdS cell
 
 //Global Objects
 FEHMotor leftMotor(FEHMotor::Motor0,9);
@@ -206,7 +206,7 @@ void turn(int degrees) //using encoders
     }
 
     //determine the number of counts
-    counts = 3.489*sqrt(degrees*degrees);
+    counts = 3.498*sqrt(degrees*degrees);
 
     //While the average of the left and right encoder is less than counts,
     //keep running motors
@@ -383,7 +383,7 @@ void performanceTestTwo() {
     while(CdSCell.Value()>START);
 
     //move forward 1
-    drive(7.5);
+    drive(8.8);
     Sleep(1.5);
 
     //turn 90 degrees CW
@@ -391,7 +391,7 @@ void performanceTestTwo() {
     Sleep(1.5);
 
     //move backwards 2
-    drive(-9.25);
+    drive(-8.75);
     Sleep(1.50);
 
     //turn 90 degrees CW
@@ -400,27 +400,22 @@ void performanceTestTwo() {
 
     //read CdS cell
     double lightColor = CdSCell.Value();
-    int turnDirection = -1;
 
     //Red color will be 0, blue will be 1
     if (lightColor < (RED+LIGHTTOL) && lightColor > (RED-LIGHTTOL)) {
-        turnDirection = 0;
+        buttonServo.SetDegree(180);
     } else if (lightColor < (BLUE+LIGHTTOL) && lightColor > (BLUE-LIGHTTOL)) {
-        turnDirection = 1;
+        buttonServo.SetDegree(-10);
     } else {
         LCD.Clear();
         LCD.WriteLine("The light color failed to be read");
+        Sleep(3.0);
     }
 
-    //turn the servo correctly
-    if (turnDirection == 1) {
-        buttonServo.SetDegree(180);
-    } else if (turnDirection == 0) {
-        buttonServo.SetDegree(0);
-    }
+    Sleep(1.0);
 
     //move backwards 3
-    drive(-4.5);
+    drive(-5);
 
     //Wait for just over 5 seconds
     Sleep(5.5);
@@ -437,11 +432,11 @@ void performanceTestTwo() {
     Sleep(1.5);
 
     //move forwards 5
-    drive(18);
+    drive(21);
     Sleep(1.5);
 
     //move backwards 6
-    drive(-8.75);
+    drive(-12.25);
     Sleep(1.5);
 
     //turn 90 degrees CCW
