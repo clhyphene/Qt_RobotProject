@@ -35,6 +35,11 @@ void dance_turn(int degrees);
 void dance_party();
 void performanceTestOne();
 void performanceTestTwo();
+void check_heading(float heading); //using RPS
+void check_x_plus(float x_coordinate); //using RPS while robot is in the +x direction
+void check_y_minus(float y_coordinate); //using RPS while robot is in the -y direction
+void check_y_plus(float y_coordinate); //using RPS while robot is in the +y direction
+void check_x_minus(float x_coordinate); //using RPS while robot is in the -x direction
 
 //Global Variables
 //Input standard motor power levels here
@@ -255,6 +260,185 @@ void dance_turn(int degrees) //using encoders
     leftMotor.Stop();
     rightMotor.Stop();
 }
+
+void check_heading(float heading) //using RPS
+{
+    LCD.Clear();
+    LCD.WriteLine("Check Heading");
+
+    if (heading == 0) {
+        while(RPS.Heading() >= 1 && RPS.Heading() <= 359) {
+            if (RPS.Heading() >= 180) {
+                turn_left(12, 1);
+                Sleep(.1);
+            } else if ( RPS.Heading() < 180) {
+                turn_right(12,1);
+                Sleep(.1);
+            }
+        }
+    } else {
+        while (RPS.Heading() > heading+1 || RPS.Heading() < heading - 1) {
+            if(RPS.Heading()-heading < 180 || RPS.Heading()-heading > -180) {
+                if(RPS.Heading() > heading) {
+                    turn_right(12, 1);
+                    Sleep(.1);
+                } else if (RPS.Heading() < heading) {
+                    turn_left(12, 1);
+                    Sleep(.1);
+                }
+            } else {
+                if(RPS.Heading() > heading) {
+                    turn_left(12, 1);
+                    Sleep(.1);
+                } else if (RPS.Heading() < heading) {
+                    turn_right(12, 1);
+                    Sleep(.1);
+                }
+            }
+        }
+    }
+}
+
+void check_x_minus(float x_coordinate) //using RPS while robot is in the -x direction
+{
+    LCD.Clear();
+    LCD.WriteLine("Check X minus");
+
+    //check whether the robot is within an acceptable range
+    while(RPS.X() < x_coordinate - 1 || RPS.X() > x_coordinate + 1)
+    {
+        if(RPS.X() > x_coordinate)
+        {
+            //pulse the motors for a short duration in the correct direction
+
+            right_motor.SetPercent(20);
+            left_motor.SetPercent(20);
+
+            Sleep(.1);
+
+            right_motor.Stop();
+            left_motor.Stop();
+        }
+        else if(RPS.X() < x_coordinate)
+        {
+            //pulse the motors for a short duration in the correct direction
+
+            right_motor.SetPercent(-20);
+            left_motor.SetPercent(-20);
+
+            Sleep(.1);
+
+            right_motor.Stop();
+            left_motor.Stop();
+        }
+    }
+}
+
+void check_x_plus(float x_coordinate) //using RPS while robot is in the +x direction
+{
+    LCD.Clear();
+    LCD.WriteLine("Check X plus");
+
+    //check whether the robot is within an acceptable range
+    while(RPS.X() < x_coordinate - 1 || RPS.X() > x_coordinate + 1)
+    {
+        if(RPS.X() > x_coordinate)
+        {
+            //pulse the motors for a short duration in the correct direction
+
+            right_motor.SetPercent(-20);
+            left_motor.SetPercent(-20);
+
+            Sleep(.1);
+
+            right_motor.Stop();
+            left_motor.Stop();
+        }
+        else if(RPS.X() < x_coordinate)
+        {
+            //pulse the motors for a short duration in the correct direction
+
+            right_motor.SetPercent(20);
+            left_motor.SetPercent(20);
+
+            Sleep(.1);
+
+            right_motor.Stop();
+            left_motor.Stop();
+        }
+    }
+}
+
+void check_y_minus(float y_coordinate) //using RPS while robot is in the -y direction
+{
+    LCD.Clear();
+    LCD.WriteLine("Check Y minus");
+
+    //check whether the robot is within an acceptable range
+    while(RPS.Y() < y_coordinate - 1 || RPS.Y() > y_coordinate + 1)
+    {
+        if(RPS.Y() > y_coordinate)
+        {
+            //pulse the motors for a short duration in the correct direction
+
+            right_motor.SetPercent(20);
+            left_motor.SetPercent(20);
+
+            Sleep(.1);
+
+            right_motor.Stop();
+            left_motor.Stop();
+        }
+        else if(RPS.Y() < y_coordinate)
+        {
+            //pulse the motors for a short duration in the correct direction
+
+            right_motor.SetPercent(-20);
+            left_motor.SetPercent(-20);
+
+            Sleep(.1);
+
+            right_motor.Stop();
+            left_motor.Stop();
+        }
+    }
+}
+
+void check_y_plus(float y_coordinate) //using RPS while robot is in the +y direction
+{
+    LCD.Clear();
+    LCD.WriteLine("Check Y plus");
+
+    //check whether the robot is within an acceptable range
+    while(RPS.Y() < y_coordinate - 1 || RPS.Y() > y_coordinate + 1)
+    {
+        if(RPS.Y() > y_coordinate)
+        {
+            //pulse the motors for a short duration in the correct direction
+
+            right_motor.SetPercent(-20);
+            left_motor.SetPercent(-20);
+
+            Sleep(.1);
+
+            right_motor.Stop();
+            left_motor.Stop();
+        }
+        else if(RPS.Y() < y_coordinate)
+        {
+            //pulse the motors for a short duration in the correct direction
+
+            right_motor.SetPercent(20);
+            left_motor.SetPercent(20);
+
+            Sleep(.1);
+
+            right_motor.Stop();
+            left_motor.Stop();
+        }
+    }
+}
+
 
 void performanceTestOne() {
 
