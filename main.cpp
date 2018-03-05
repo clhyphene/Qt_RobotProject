@@ -27,12 +27,9 @@ AnalogInputPin CdSCell(FEHIO::P3_7);
 
 //Function Prototypes
 void driveStraight(int percent);
-void getWorldState(int *rEncVal, int *lEncVal, double *CdSVal);
 void resetEncoders();
 void drive(float distance); //using encoders
 void turn(int degrees);
-void dance_turn(int degrees);
-void dance_party();
 void performanceTestOne();
 void performanceTestTwo();
 void check_heading(float heading); //using RPS
@@ -40,6 +37,7 @@ void check_x_plus(float x_coordinate); //using RPS while robot is in the +x dire
 void check_y_minus(float y_coordinate); //using RPS while robot is in the -y direction
 void check_y_plus(float y_coordinate); //using RPS while robot is in the +y direction
 void check_x_minus(float x_coordinate); //using RPS while robot is in the -x direction
+void setup();// runs all prior setup functions
 
 //Global Variables
 //Input standard motor power levels here
@@ -53,59 +51,14 @@ float counts;
 
 int main(void)
 {
-    //Servo min and max values from calibration
-    buttonServo.SetMin(500);
-    buttonServo.SetMax(2319);
+    setup();
 
-    performanceTestTwo();
+
 
     return 0;
 }
 
 //Functions
-void dance_party() {
-    //party time
-    LCD.Clear(GOLDENROD);
-    LCD.SetFontColor(BLACK);
-    LCD.WriteLine("All done !");
-    LCD.WriteLine(" ");
-    LCD.WriteLine("Dance partyyyy");
-    //dance
-    motor_percent_turn = 60;
-    turn(360);
-    Sleep(.5);
-    motor_percent_turn = 28;
-    dance_turn(30);
-    LCD.Clear(GOLDENROD);
-    LCD.SetFontColor(BLACK);
-    LCD.WriteLine("Dance partyyyy");
-    dance_turn(-30);
-    LCD.Clear(CYAN);
-    LCD.SetFontColor(BLACK);
-    LCD.WriteLine("Dance partyyyy");
-    dance_turn(30);
-    LCD.Clear(RED);
-    LCD.SetFontColor(BLACK);
-    LCD.WriteLine("Dance partyyyy");
-    dance_turn(-30);
-    LCD.Clear(GREEN);
-    LCD.SetFontColor(BLACK);
-    LCD.WriteLine("Dance partyyyy");
-    dance_turn(30);
-    LCD.Clear(PINK);
-    LCD.SetFontColor(BLACK);
-    LCD.WriteLine("Dance partyyyy");
-    dance_turn(-30);
-    LCD.Clear(GOLDENROD);
-    LCD.SetFontColor(BLACK);
-    LCD.WriteLine("Dance partyyyy");
-    dance_turn(30);
-    LCD.Clear(WHITE);
-    LCD.SetFontColor(BLACK);
-    LCD.WriteLine("Dance partyyyy");
-    dance_turn(-30);
-    LCD.WriteLine("All done !");
-}
 
 void driveStraight(int percent) {
 
@@ -115,13 +68,6 @@ void driveStraight(int percent) {
     leftMotor.SetPercent(percent);
     rightMotor.SetPercent(percent);
 }
-
-/*void getWorldState(int *rEncVal, int *lEncVal, double *CdSVal) {
-    //Reads current data from all input sources and sends them to main via pointers
-    &rEncVal = rightEnc.Counts();
-    &lEncVal = leftEnc.Counts();
-    &CdSVal = CdSCell.Value();
-}*/
 
 void resetEncoders() {
     //Sets both encoders counts to 0
@@ -212,45 +158,6 @@ void turn(int degrees) //using encoders
 
     //determine the number of counts
     counts = 3.476*sqrt(degrees*degrees);
-
-    //While the average of the left and right encoder is less than counts,
-    //keep running motors
-    while((rightEnc.Counts() + leftEnc.Counts()) / 2. < counts);
-
-    //Turn off motors
-    leftMotor.Stop();
-    rightMotor.Stop();
-}
-
-void dance_turn(int degrees) //using encoders
-{
-    //make sure motor percents are at correct values
-    left_motor_percent_turn = motor_percent_turn;
-    right_motor_percent_turn = -motor_percent_turn;
-
-    //Reset encoder counts
-    resetEncoders();
-
-
-    //detect whether turning clockwise or counterclockwise
-    if (degrees >= 0) //clockwise
-    {
-        //Set both motors to desired percent
-        leftMotor.SetPercent(right_motor_percent_turn);
-        rightMotor.SetPercent((-1)*(left_motor_percent_turn));
-
-    }
-
-    else //counterclockwise
-    {
-        //Set both motors to desired percent
-        leftMotor.SetPercent((-1)*(right_motor_percent_turn));
-        rightMotor.SetPercent(left_motor_percent_turn);
-
-    }
-
-    //determine the number of counts
-    counts = 3.435*sqrt(degrees*degrees);
 
     //While the average of the left and right encoder is less than counts,
     //keep running motors
@@ -437,6 +344,16 @@ void check_y_plus(float y_coordinate) //using RPS while robot is in the +y direc
             left_motor.Stop();
         }
     }
+}
+
+void setup() {
+    //Servo min and max values from calibration
+    buttonServo.SetMin(500);
+    buttonServo.SetMax(2319);
+
+
+    RPS.InitializeTouchMenu();
+
 }
 
 
