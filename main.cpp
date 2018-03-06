@@ -7,9 +7,9 @@
 #include <math.h>
 
 #define START 1.5 //define the threshold which signifies the starting light turning on
-#define BLUE 1.03 //recorded using test code
-#define RED 0.42 //recorded using test code
-#define LIGHTTOL 0.35 //tolerance for acceptable voltage values from CdS cell
+#define BLUELIGHT 1.03 //recorded using test code
+#define REDLIGHT 0.42 //recorded using test code
+#define LIGHTTOL 0.3 //tolerance for acceptable voltage values from CdS cell
 
 //Global Objects
 FEHMotor leftMotor(FEHMotor::Motor0,9);
@@ -19,7 +19,7 @@ DigitalEncoder leftEnc(FEHIO::P0_0);
 DigitalEncoder rightEnc(FEHIO::P0_1);
 
 FEHServo buttonServo(FEHServo::Servo0);
-FEHServo rotateServo(FEHServo::Servo1);
+FEHServo forkServo(FEHServo::Servo1);
 FEHServo liftServo(FEHServo::Servo2);
 //Servos turn CCW to 180 when facing the motor
 
@@ -32,6 +32,7 @@ void drive(float distance); //using encoders
 void turn(int degrees);
 void performanceTestOne();
 void performanceTestTwo();
+void performanceTestThree();
 void check_heading(float heading); //using RPS
 void check_x_plus(float x_coordinate); //using RPS while robot is in the +x direction
 void check_y_minus(float y_coordinate); //using RPS while robot is in the -y direction
@@ -53,7 +54,7 @@ int main(void)
 {
     setup();
 
-
+    performanceTestThree();
 
     return 0;
 }
@@ -176,10 +177,10 @@ void check_heading(float heading) //using RPS
     if (heading == 0) {
         while(RPS.Heading() >= 1 && RPS.Heading() <= 359) {
             if (RPS.Heading() >= 180) {
-                turn_left(12, 1);
+                turn(-2);
                 Sleep(.1);
             } else if ( RPS.Heading() < 180) {
-                turn_right(12,1);
+                turn(2);
                 Sleep(.1);
             }
         }
@@ -187,18 +188,18 @@ void check_heading(float heading) //using RPS
         while (RPS.Heading() > heading+1 || RPS.Heading() < heading - 1) {
             if(RPS.Heading()-heading < 180 || RPS.Heading()-heading > -180) {
                 if(RPS.Heading() > heading) {
-                    turn_right(12, 1);
+                    turn(2);
                     Sleep(.1);
                 } else if (RPS.Heading() < heading) {
-                    turn_left(12, 1);
+                    turn(-2);
                     Sleep(.1);
                 }
             } else {
                 if(RPS.Heading() > heading) {
-                    turn_left(12, 1);
+                    turn(-2);
                     Sleep(.1);
                 } else if (RPS.Heading() < heading) {
-                    turn_right(12, 1);
+                    turn(2);
                     Sleep(.1);
                 }
             }
@@ -218,25 +219,25 @@ void check_x_minus(float x_coordinate) //using RPS while robot is in the -x dire
         {
             //pulse the motors for a short duration in the correct direction
 
-            right_motor.SetPercent(20);
-            left_motor.SetPercent(20);
+            rightMotor.SetPercent(20);
+            leftMotor.SetPercent(20);
 
             Sleep(.1);
 
-            right_motor.Stop();
-            left_motor.Stop();
+            rightMotor.Stop();
+            leftMotor.Stop();
         }
         else if(RPS.X() < x_coordinate)
         {
             //pulse the motors for a short duration in the correct direction
 
-            right_motor.SetPercent(-20);
-            left_motor.SetPercent(-20);
+            rightMotor.SetPercent(-20);
+            leftMotor.SetPercent(-20);
 
             Sleep(.1);
 
-            right_motor.Stop();
-            left_motor.Stop();
+            rightMotor.Stop();
+            leftMotor.Stop();
         }
     }
 }
@@ -253,25 +254,25 @@ void check_x_plus(float x_coordinate) //using RPS while robot is in the +x direc
         {
             //pulse the motors for a short duration in the correct direction
 
-            right_motor.SetPercent(-20);
-            left_motor.SetPercent(-20);
+            rightMotor.SetPercent(-20);
+            leftMotor.SetPercent(-20);
 
             Sleep(.1);
 
-            right_motor.Stop();
-            left_motor.Stop();
+            rightMotor.Stop();
+            leftMotor.Stop();
         }
         else if(RPS.X() < x_coordinate)
         {
             //pulse the motors for a short duration in the correct direction
 
-            right_motor.SetPercent(20);
-            left_motor.SetPercent(20);
+            rightMotor.SetPercent(20);
+            leftMotor.SetPercent(20);
 
             Sleep(.1);
 
-            right_motor.Stop();
-            left_motor.Stop();
+            rightMotor.Stop();
+            leftMotor.Stop();
         }
     }
 }
@@ -288,25 +289,25 @@ void check_y_minus(float y_coordinate) //using RPS while robot is in the -y dire
         {
             //pulse the motors for a short duration in the correct direction
 
-            right_motor.SetPercent(20);
-            left_motor.SetPercent(20);
+            rightMotor.SetPercent(20);
+            leftMotor.SetPercent(20);
 
             Sleep(.1);
 
-            right_motor.Stop();
-            left_motor.Stop();
+            rightMotor.Stop();
+            leftMotor.Stop();
         }
         else if(RPS.Y() < y_coordinate)
         {
             //pulse the motors for a short duration in the correct direction
 
-            right_motor.SetPercent(-20);
-            left_motor.SetPercent(-20);
+            rightMotor.SetPercent(-20);
+            leftMotor.SetPercent(-20);
 
             Sleep(.1);
 
-            right_motor.Stop();
-            left_motor.Stop();
+            rightMotor.Stop();
+            leftMotor.Stop();
         }
     }
 }
@@ -323,25 +324,25 @@ void check_y_plus(float y_coordinate) //using RPS while robot is in the +y direc
         {
             //pulse the motors for a short duration in the correct direction
 
-            right_motor.SetPercent(-20);
-            left_motor.SetPercent(-20);
+            rightMotor.SetPercent(-20);
+            leftMotor.SetPercent(-20);
 
             Sleep(.1);
 
-            right_motor.Stop();
-            left_motor.Stop();
+            rightMotor.Stop();
+            leftMotor.Stop();
         }
         else if(RPS.Y() < y_coordinate)
         {
             //pulse the motors for a short duration in the correct direction
 
-            right_motor.SetPercent(20);
-            left_motor.SetPercent(20);
+            rightMotor.SetPercent(20);
+            leftMotor.SetPercent(20);
 
             Sleep(.1);
 
-            right_motor.Stop();
-            left_motor.Stop();
+            rightMotor.Stop();
+            leftMotor.Stop();
         }
     }
 }
@@ -350,6 +351,13 @@ void setup() {
     //Servo min and max values from calibration
     buttonServo.SetMin(500);
     buttonServo.SetMax(2319);
+
+    forkServo.SetMin(500);
+    forkServo.SetMax(2404);
+
+    liftServo.SetMin(708);
+    liftServo.SetMax(2456);
+
 
 
     RPS.InitializeTouchMenu();
@@ -464,9 +472,6 @@ void performanceTestOne() {
     drive(-24);
     Sleep(1.5);
 
-    //All done
-    dance_party();
-    Sleep(10.0);
 }
 
 void performanceTestTwo() {
@@ -503,11 +508,11 @@ void performanceTestTwo() {
     double lightColor = CdSCell.Value();
 
     //Red color will be 0, blue will be 1
-    if (lightColor < (RED+LIGHTTOL) && lightColor > (RED-LIGHTTOL)) {
+    if (lightColor < (REDLIGHT+LIGHTTOL) && lightColor > (REDLIGHT-LIGHTTOL)) {
         buttonServo.SetDegree(180);
         LCD.Clear();
         LCD.WriteLine("I see RED");
-    } else if (lightColor < (BLUE+LIGHTTOL) && lightColor > (BLUE-LIGHTTOL)) {
+    } else if (lightColor < (BLUELIGHT+LIGHTTOL) && lightColor > (BLUELIGHT-LIGHTTOL)) {
         buttonServo.SetDegree(-10);
         LCD.Clear();
         LCD.WriteLine("I see BLUE");
@@ -554,7 +559,8 @@ void performanceTestTwo() {
     drive(-8);
 
     //Performance test 2 complete
+}
 
-
+void performanceTestThree() {
 
 }
