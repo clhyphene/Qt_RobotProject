@@ -34,10 +34,10 @@ void performanceTestOne();
 void performanceTestTwo();
 void performanceTestThree();
 void check_heading(float heading); //using RPS
-void check_x_plus(float x_coordinate); //using RPS while robot is in the +x direction
-void check_y_minus(float y_coordinate); //using RPS while robot is in the -y direction
-void check_y_plus(float y_coordinate); //using RPS while robot is in the +y direction
-void check_x_minus(float x_coordinate); //using RPS while robot is in the -x direction
+void check_x_plus(float x_Ref, float delt_x); //using RPS while robot is in the +x direction
+void check_y_minus(float y_Ref, float delt_y); //using RPS while robot is in the -y direction
+void check_y_plus(float y_Ref, float delt_y); //using RPS while robot is in the +y direction
+void check_x_minus(float x_Ref, float delt_x); //using RPS while robot is in the -x direction
 void setup();// runs all prior setup functions
 
 //Global Variables
@@ -207,8 +207,9 @@ void check_heading(float heading) //using RPS
     }
 }
 
-void check_x_minus(float x_coordinate) //using RPS while robot is in the -x direction
+void check_x_minus(float x_Ref, float delt_x) //using RPS while robot is in the -x direction
 {
+    float x_coordinate = x_Ref - delt_x;
     LCD.Clear();
     LCD.WriteLine("Check X minus");
 
@@ -242,8 +243,9 @@ void check_x_minus(float x_coordinate) //using RPS while robot is in the -x dire
     }
 }
 
-void check_x_plus(float x_coordinate) //using RPS while robot is in the +x direction
+void check_x_plus(float x_Ref, float delt_x) //using RPS while robot is in the +x direction
 {
+    float x_coordinate = x_Ref+delt_x;
     LCD.Clear();
     LCD.WriteLine("Check X plus");
 
@@ -277,8 +279,9 @@ void check_x_plus(float x_coordinate) //using RPS while robot is in the +x direc
     }
 }
 
-void check_y_minus(float y_coordinate) //using RPS while robot is in the -y direction
+void check_y_minus(float y_Ref, float delt_y) //using RPS while robot is in the -y direction
 {
+    float y_coordinate = y_Ref - delt_y;
     LCD.Clear();
     LCD.WriteLine("Check Y minus");
 
@@ -312,8 +315,9 @@ void check_y_minus(float y_coordinate) //using RPS while robot is in the -y dire
     }
 }
 
-void check_y_plus(float y_coordinate) //using RPS while robot is in the +y direction
+void check_y_plus(float y_Ref, float delt_y) //using RPS while robot is in the +y direction
 {
+    float y_coordinate = y_Ref+delt_y;
     LCD.Clear();
     LCD.WriteLine("Check Y plus");
 
@@ -562,5 +566,125 @@ void performanceTestTwo() {
 }
 
 void performanceTestThree() {
+    float x, y; //for touch screen
 
+    float x_coordinate, y_coordinate;
+
+    //Initialize the screen
+    LCD.Clear(BLACK);
+    LCD.SetFontColor(WHITE);
+
+    LCD.WriteLine("Code has begun");
+
+    //wait for CdS cell to start
+    while(CdSCell.Value()>START);
+
+    //Get current location
+    x_coordinate = RPS.X();
+    y_coordinate = RPS.Y();
+
+    //move forward 1
+    drive(11.5);
+    Sleep(.5);
+
+    //check RPS
+    check_y_minus(y_coordinate, 11.5);
+
+    turn(90);
+    Sleep(.5);
+
+    //check RPS
+    check_heading(180);
+
+    //Get current location
+    x_coordinate = RPS.X();
+    y_coordinate = RPS.Y();
+
+    //move forward 2
+    drive(11.5);
+    Sleep(.5);
+
+    //check RPS
+    check_x_minus(x_coordinate, 11.5);
+
+    //SOMETHING WITH LIFT SERVO THAT PICKS UP THE WRENCH*****************************************************
+
+    //Get current location
+    x_coordinate = RPS.X();
+    y_coordinate = RPS.Y();
+
+    //move backward 3
+    drive(-11.5);
+    Sleep(.5);
+
+    //Check RPS
+    check_x_plus(x_coordinate, 11.5);
+
+    turn(-90);
+    Sleep(.5);
+
+    //Check RPS
+    check_heading(90);
+
+    //Get current location
+    x_coordinate = RPS.X();
+    y_coordinate = RPS.Y();
+
+    //move forward 4
+    drive(3.5);
+    Sleep(.5);
+
+    //Check RPS
+    check_y_plus(y_coordinate, 3.5);
+
+    turn(90);
+    Sleep(.5);
+
+    //Check RPS
+    check_heading(0);
+
+    //Get current location
+    x_coordinate = RPS.X();
+    y_coordinate = RPS.Y();
+
+    //move forward 5
+    drive(13);
+    Sleep(.5);
+
+    //Check RPS
+    check_x_plus(x_coordinate, 13);
+
+    turn(-90);
+    Sleep(.5);
+
+    //Check RPS
+    check_heading(90);
+
+    //RPS goes dead from here on
+
+    //move forward 6
+    drive(25);
+    Sleep(.5);
+
+    turn(-30);
+    Sleep(.5);
+
+    //move forward 7
+    drive(30);
+    Sleep(.5);
+
+    //SOMETHING WITH THE LIFT SERVO THAT LOWERS THE WRENCH************************************
+
+    //move backward 8
+    drive(-12.5);
+    Sleep(.5);
+
+    turn(90);
+    Sleep(.5);
+
+    //move backward 9
+    drive(-13);
+    Sleep(.5);
+
+    //Done
 }
