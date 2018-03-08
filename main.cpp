@@ -362,6 +362,10 @@ void setup() {
     liftServo.SetMin(708);
     liftServo.SetMax(2456);
 
+    //Set servos to starting values
+    buttonServo.SetDegree(90);
+    forkServo.SetDegree(0);
+    liftServo.SetDegree(180);
 
 
     RPS.InitializeTouchMenu();
@@ -608,6 +612,9 @@ void performanceTestThree() {
     check_x_minus(x_coordinate, 11.5);
 
     //SOMETHING WITH LIFT SERVO THAT PICKS UP THE WRENCH*****************************************************
+    //low=180
+    //high=100
+    liftServo.SetDegree(100);
 
     //Get current location
     x_coordinate = RPS.X();
@@ -674,6 +681,7 @@ void performanceTestThree() {
     Sleep(.5);
 
     //SOMETHING WITH THE LIFT SERVO THAT LOWERS THE WRENCH************************************
+    liftServo.SetDegree(180);
 
     //move backward 8
     drive(-12.5);
