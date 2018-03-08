@@ -15,12 +15,12 @@
 FEHMotor leftMotor(FEHMotor::Motor0,9);
 FEHMotor rightMotor(FEHMotor::Motor1,9);
 
-DigitalEncoder leftEnc(FEHIO::P0_0);
-DigitalEncoder rightEnc(FEHIO::P0_1);
+DigitalEncoder leftEnc(FEHIO::P0_2);
+DigitalEncoder rightEnc(FEHIO::P0_4);
 
 FEHServo buttonServo(FEHServo::Servo0);
-FEHServo forkServo(FEHServo::Servo1);
-FEHServo liftServo(FEHServo::Servo2);
+FEHServo forkServo(FEHServo::Servo2);
+FEHServo liftServo(FEHServo::Servo4);
 //Servos turn CCW to 180 when facing the motor
 
 AnalogInputPin CdSCell(FEHIO::P3_7);
