@@ -51,6 +51,7 @@ int motor_percent_turn = 26;
 int left_motor_percent_turn = motor_percent_turn;
 int right_motor_percent_turn = -motor_percent_turn;
 float counts;
+float wrenchX, wrenchY;
 
 int main(void)
 {
@@ -402,6 +403,21 @@ void setup() {
 
     RPS.InitializeTouchMenu();
 
+//    float x, y;
+//    LCD.Clear();
+//    LCD.WriteLine("Position Wrench");
+
+//    while(!LCD.Touch(&x, &y));
+
+//    wrenchX = RPS.X();
+//    wrenchY = RPS.Y();
+
+//    Sleep(1.5);
+
+//    LCD.Clear();
+//    LCD.WriteLine("Put in Start location Push to Start");
+//    while(!LCD.Touch(&x, &y));
+
 }
 
 
@@ -654,11 +670,13 @@ void performanceTestThree() {
     y_coordinate = RPS.Y();
 
     //move forward 2-2
-    drive(1.5);
+    drive(2);
+    //drive(y_coordinate-wrenchY);
     Sleep(.75);
 
     //check RPS
-    check_y_minus(y_coordinate, 1.5);
+   check_y_minus(y_coordinate, 2);
+    // check_y_minus(y_coordinate, y_coordinate-wrenchY);
 
     turn(90);
     Sleep(.75);
@@ -673,7 +691,8 @@ void performanceTestThree() {
     setMotorSpeed(25);
 
     //move forward 2-3
-    drive(5.5);
+    drive(5);
+    //drive(x_coordinate-wrenchX);
     Sleep(.75);
 
     resetMotorSpeed();
@@ -684,7 +703,9 @@ void performanceTestThree() {
     //SOMETHING WITH LIFT SERVO THAT PICKS UP THE WRENCH*****************************************************
     //low=180
     //high=90
-    liftServo.SetDegree(90);
+    liftServo.SetDegree(65);
+
+    Sleep(.75);
 
     //Get current location
     x_coordinate = RPS.X();
@@ -708,7 +729,7 @@ void performanceTestThree() {
     y_coordinate = RPS.Y();
 
     //move forward 4
-    drive(4);
+    drive(3);
     Sleep(.75);
 
     //Check RPS
@@ -725,11 +746,11 @@ void performanceTestThree() {
     y_coordinate = RPS.Y();
 
     //move forward 5
-    drive(13.5);
+    drive(14.5);
     Sleep(.75);
 
     //Check RPS
-    check_x_plus(x_coordinate, 13.5);
+    check_x_plus(x_coordinate, 14.5);
 
     turn(-90);
     Sleep(.75);
@@ -740,10 +761,10 @@ void performanceTestThree() {
     //RPS goes dead from here on
 
     //move forward 6
-    drive(24);
+    drive(25);
     Sleep(.75);
 
-    turn(-38);
+    turn(-45);
     Sleep(.75);
 
     //move forward 7
@@ -753,15 +774,17 @@ void performanceTestThree() {
     //SOMETHING WITH THE LIFT SERVO THAT LOWERS THE WRENCH************************************
     liftServo.SetDegree(180);
 
+    Sleep(.75);
+
     //move backward 8
     drive(-12.5);
     Sleep(.75);
 
-    turn(90);
+    turn(-90);
     Sleep(.75);
 
     //move backward 9
-    drive(-13);
+    drive(-15);
     Sleep(.75);
 
     //Done
