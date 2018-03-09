@@ -39,6 +39,8 @@ void check_y_minus(float y_Ref, float delt_y); //using RPS while robot is in the
 void check_y_plus(float y_Ref, float delt_y); //using RPS while robot is in the +y direction
 void check_x_minus(float x_Ref, float delt_x); //using RPS while robot is in the -x direction
 void setup();// runs all prior setup functions
+void setMotorSpeed(int percent);
+void resetMotorSpeed();
 
 //Global Variables
 //Input standard motor power levels here
@@ -158,7 +160,7 @@ void turn(int degrees) //using encoders
     }
 
     //determine the number of counts
-    counts = 3.476*sqrt(degrees*degrees);
+    counts = 3.473*sqrt(degrees*degrees);
 
     //While the average of the left and right encoder is less than counts,
     //keep running motors
@@ -169,37 +171,51 @@ void turn(int degrees) //using encoders
     rightMotor.Stop();
 }
 
+void resetMotorSpeed() {
+    left_motor_percent = -motor_percent;
+    right_motor_percent = motor_percent;
+}
+
+void setMotorSpeed(int percent) {
+    left_motor_percent = -percent;
+    right_motor_percent = percent;
+}
+
 void check_heading(float heading) //using RPS
 {
+    if(RPS.Heading()<0) {
+        return;
+    }
+
     LCD.Clear();
     LCD.WriteLine("Check Heading");
 
     if (heading == 0) {
-        while(RPS.Heading() >= 1 && RPS.Heading() <= 359) {
+        while(RPS.Heading() >= 0.75 && RPS.Heading() <= 359.25) {
             if (RPS.Heading() >= 180) {
-                turn(-2);
+                turn(-1);
                 Sleep(.1);
             } else if ( RPS.Heading() < 180) {
-                turn(2);
+                turn(1);
                 Sleep(.1);
             }
         }
     } else {
-        while (RPS.Heading() > heading+1 || RPS.Heading() < heading - 1) {
+        while (RPS.Heading() > heading+.75 || RPS.Heading() < heading - .75) {
             if(RPS.Heading()-heading < 180 || RPS.Heading()-heading > -180) {
                 if(RPS.Heading() > heading) {
-                    turn(2);
+                    turn(1);
                     Sleep(.1);
                 } else if (RPS.Heading() < heading) {
-                    turn(-2);
+                    turn(-1);
                     Sleep(.1);
                 }
             } else {
                 if(RPS.Heading() > heading) {
-                    turn(-2);
+                    turn(-1);
                     Sleep(.1);
                 } else if (RPS.Heading() < heading) {
-                    turn(2);
+                    turn(1);
                     Sleep(.1);
                 }
             }
@@ -209,6 +225,10 @@ void check_heading(float heading) //using RPS
 
 void check_x_minus(float x_Ref, float delt_x) //using RPS while robot is in the -x direction
 {
+    if(RPS.X()<0) {
+        return;
+    }
+
     float x_coordinate = x_Ref - delt_x;
     LCD.Clear();
     LCD.WriteLine("Check X minus");
@@ -245,6 +265,10 @@ void check_x_minus(float x_Ref, float delt_x) //using RPS while robot is in the 
 
 void check_x_plus(float x_Ref, float delt_x) //using RPS while robot is in the +x direction
 {
+    if(RPS.X()<0) {
+        return;
+    }
+
     float x_coordinate = x_Ref+delt_x;
     LCD.Clear();
     LCD.WriteLine("Check X plus");
@@ -281,6 +305,10 @@ void check_x_plus(float x_Ref, float delt_x) //using RPS while robot is in the +
 
 void check_y_minus(float y_Ref, float delt_y) //using RPS while robot is in the -y direction
 {
+    if(RPS.Y()<0) {
+        return;
+    }
+
     float y_coordinate = y_Ref - delt_y;
     LCD.Clear();
     LCD.WriteLine("Check Y minus");
@@ -317,6 +345,10 @@ void check_y_minus(float y_Ref, float delt_y) //using RPS while robot is in the 
 
 void check_y_plus(float y_Ref, float delt_y) //using RPS while robot is in the +y direction
 {
+    if(RPS.Y()<0) {
+        return;
+    }
+
     float y_coordinate = y_Ref+delt_y;
     LCD.Clear();
     LCD.WriteLine("Check Y plus");
@@ -588,14 +620,14 @@ void performanceTestThree() {
     y_coordinate = RPS.Y();
 
     //move forward 1
-    drive(11.5);
-    Sleep(.5);
+    drive(10);
+    Sleep(.75);
 
     //check RPS
-    check_y_minus(y_coordinate, 11.5);
+    check_y_minus(y_coordinate, 10);
 
     turn(90);
-    Sleep(.5);
+    Sleep(.75);
 
     //check RPS
     check_heading(180);
@@ -604,31 +636,69 @@ void performanceTestThree() {
     x_coordinate = RPS.X();
     y_coordinate = RPS.Y();
 
-    //move forward 2
-    drive(11.5);
-    Sleep(.5);
+    //move forward 2-1
+    drive(6);//add to 11.5
+    Sleep(.75);
 
     //check RPS
-    check_x_minus(x_coordinate, 11.5);
+    check_x_minus(x_coordinate, 6);
+
+    turn(-90);
+    Sleep(.75);
+
+    //check RPS
+    check_heading(270);
+
+    //Get current location
+    x_coordinate = RPS.X();
+    y_coordinate = RPS.Y();
+
+    //move forward 2-2
+    drive(1.5);
+    Sleep(.75);
+
+    //check RPS
+    check_y_minus(y_coordinate, 1.5);
+
+    turn(90);
+    Sleep(.75);
+
+    //check RPS
+    check_heading(180);
+
+    //Get current location
+    x_coordinate = RPS.X();
+    y_coordinate = RPS.Y();
+
+    setMotorSpeed(25);
+
+    //move forward 2-3
+    drive(5.5);
+    Sleep(.75);
+
+    resetMotorSpeed();
+
+
+    Sleep(1.5);
 
     //SOMETHING WITH LIFT SERVO THAT PICKS UP THE WRENCH*****************************************************
     //low=180
-    //high=100
-    liftServo.SetDegree(100);
+    //high=90
+    liftServo.SetDegree(90);
 
     //Get current location
     x_coordinate = RPS.X();
     y_coordinate = RPS.Y();
 
     //move backward 3
-    drive(-11.5);
-    Sleep(.5);
+    drive(-5.5);
+    Sleep(.75);
 
     //Check RPS
-    check_x_plus(x_coordinate, 11.5);
+    check_x_plus(x_coordinate, 5.5);
 
-    turn(-90);
-    Sleep(.5);
+    turn(90);
+    Sleep(.75);
 
     //Check RPS
     check_heading(90);
@@ -638,14 +708,14 @@ void performanceTestThree() {
     y_coordinate = RPS.Y();
 
     //move forward 4
-    drive(3.5);
-    Sleep(.5);
+    drive(4);
+    Sleep(.75);
 
     //Check RPS
-    check_y_plus(y_coordinate, 3.5);
+    check_y_plus(y_coordinate, 4);
 
     turn(90);
-    Sleep(.5);
+    Sleep(.75);
 
     //Check RPS
     check_heading(0);
@@ -655,14 +725,14 @@ void performanceTestThree() {
     y_coordinate = RPS.Y();
 
     //move forward 5
-    drive(13);
-    Sleep(.5);
+    drive(13.5);
+    Sleep(.75);
 
     //Check RPS
-    check_x_plus(x_coordinate, 13);
+    check_x_plus(x_coordinate, 13.5);
 
     turn(-90);
-    Sleep(.5);
+    Sleep(.75);
 
     //Check RPS
     check_heading(90);
@@ -670,29 +740,29 @@ void performanceTestThree() {
     //RPS goes dead from here on
 
     //move forward 6
-    drive(25);
-    Sleep(.5);
+    drive(24);
+    Sleep(.75);
 
-    turn(-30);
-    Sleep(.5);
+    turn(-38);
+    Sleep(.75);
 
     //move forward 7
-    drive(30);
-    Sleep(.5);
+    drive(27);
+    Sleep(.75);
 
     //SOMETHING WITH THE LIFT SERVO THAT LOWERS THE WRENCH************************************
     liftServo.SetDegree(180);
 
     //move backward 8
     drive(-12.5);
-    Sleep(.5);
+    Sleep(.75);
 
     turn(90);
-    Sleep(.5);
+    Sleep(.75);
 
     //move backward 9
     drive(-13);
-    Sleep(.5);
+    Sleep(.75);
 
     //Done
 }
