@@ -41,6 +41,15 @@ void check_x_minus(float x_Ref, float delt_x); //using RPS while robot is in the
 void setup();// runs all prior setup functions
 void setMotorSpeed(int percent);
 void resetMotorSpeed();
+void getLocation();
+
+//Final Competition Functions
+void carJack();
+void getWrench();
+void pushButtons();
+void dropWrench();
+void turnCrank();
+void goHome();
 
 //Global Variables
 //Input standard motor power levels here
@@ -52,12 +61,19 @@ int left_motor_percent_turn = motor_percent_turn;
 int right_motor_percent_turn = -motor_percent_turn;
 float counts;
 float wrenchX, wrenchY;
+float refX, refY;
 
 int main(void)
 {
     setup();
 
-    performanceTestThree();
+    //for final
+    //    carJack();
+    //    getWrench();
+    //    pushButtons();
+    //    dropWrench();
+    //    turnCrank();
+    //    goHome();
 
     return 0;
 }
@@ -384,6 +400,11 @@ void check_y_plus(float y_Ref, float delt_y) //using RPS while robot is in the +
     }
 }
 
+void getLocation() {
+    refX = RPS.X();
+    refY = RPS.Y();
+}
+
 void setup() {
     //Servo min and max values from calibration
     buttonServo.SetMin(500);
@@ -403,23 +424,97 @@ void setup() {
 
     RPS.InitializeTouchMenu();
 
-//    float x, y;
-//    LCD.Clear();
-//    LCD.WriteLine("Position Wrench");
+    //    float x, y;
+    //    LCD.Clear();
+    //    LCD.WriteLine("Position Wrench");
 
-//    while(!LCD.Touch(&x, &y));
+    //    while(!LCD.Touch(&x, &y));
 
-//    wrenchX = RPS.X();
-//    wrenchY = RPS.Y();
+    //    wrenchX = RPS.X();
+    //    wrenchY = RPS.Y();
 
-//    Sleep(1.5);
+    //    Sleep(1.5);
 
-//    LCD.Clear();
-//    LCD.WriteLine("Put in Start location Push to Start");
-//    while(!LCD.Touch(&x, &y));
+    //    LCD.Clear();
+    //    LCD.WriteLine("Put in Start location Push to Start");
+    //    while(!LCD.Touch(&x, &y));
 
 }
 
+void carJack() {
+    //wait for CdS cell to start
+    while(CdSCell.Value()>START);
+
+    getLocation();
+
+    //move forward
+    drive(7);
+    Sleep(1.);
+
+    //Check RPS
+    check_y_minus(refY, 7);
+    Sleep(1.);
+
+    turn(90);
+    Sleep(1.);
+
+    //Check RPS
+    check_heading(180);
+    Sleep(1.);
+
+    getLocation();
+
+    //move forward
+    drive(8);
+    Sleep(1.);
+
+    //Check RPS
+    check_x_minus(refX, 8);
+    Sleep(1.);
+
+    turn(-90);
+    Sleep(1.);
+
+    //Check RPS
+    check_heading(270);
+    Sleep(1.);
+
+    forkServo.SetDegree(90);
+    Sleep(1.);
+
+    getLocation();
+
+    //move forward
+    drive(4);
+    Sleep(1.);
+
+    //Check RPS
+    check_y_minus(refY, 4);
+    Sleep(1.);
+
+    forkServo.SetDegree(180);
+    Sleep(1.);
+}
+
+void getWrench() {
+
+}
+
+void pushButtons() {
+
+}
+
+void dropWrench() {
+
+}
+
+void turnCrank() {
+
+}
+
+void goHome() {
+
+}
 
 void performanceTestOne() {
 
@@ -675,7 +770,7 @@ void performanceTestThree() {
     Sleep(.75);
 
     //check RPS
-   check_y_minus(y_coordinate, 2);
+    check_y_minus(y_coordinate, 2);
     // check_y_minus(y_coordinate, y_coordinate-wrenchY);
 
     turn(90);
