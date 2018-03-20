@@ -54,10 +54,10 @@ void goHome();
 
 //Global Variables
 //Input standard motor power levels here
-int motor_percent = 40;
+int motor_percent = 45;
 int left_motor_percent = -motor_percent;
 int right_motor_percent = motor_percent;
-int motor_percent_turn = 26;
+int motor_percent_turn = 30;
 int left_motor_percent_turn = motor_percent_turn;
 int right_motor_percent_turn = -motor_percent_turn;
 float counts;
@@ -923,11 +923,11 @@ void performanceTestFour() {
     getLocation();
 
     //move forward
-    drive(11);
+    drive(10.25);
     Sleep(1.);
 
     //check RPS
-    check_x_plus(refX,11);
+    check_x_plus(refX,10.25);
     Sleep(1.);
 
     //turn 90 degrees CCW
