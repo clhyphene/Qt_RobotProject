@@ -33,6 +33,7 @@ void turn(int degrees);
 void performanceTestOne();
 void performanceTestTwo();
 void performanceTestThree();
+void performanceTestFour();
 void check_heading(float heading); //using RPS
 void check_x_plus(float x_Ref, float delt_x); //using RPS while robot is in the +x direction
 void check_y_minus(float y_Ref, float delt_y); //using RPS while robot is in the -y direction
@@ -62,6 +63,7 @@ int right_motor_percent_turn = -motor_percent_turn;
 float counts;
 float wrenchX, wrenchY;
 float refX, refY;
+int fuelType; //1 if needs to be turned CW 2 for CCW
 
 int main(void)
 {
@@ -74,6 +76,8 @@ int main(void)
     //    dropWrench();
     //    turnCrank();
     //    goHome();
+
+    performanceTestFour();
 
     return 0;
 }
@@ -423,6 +427,8 @@ void setup() {
 
 
     RPS.InitializeTouchMenu();
+
+    fuelType = RPS.FuelType();
 
     //    float x, y;
     //    LCD.Clear();
@@ -883,4 +889,118 @@ void performanceTestThree() {
     Sleep(.75);
 
     //Done
+}
+
+void performanceTestFour() {
+    float x, y; //for touch screen
+
+    //Initialize the screen
+    LCD.Clear(BLACK);
+    LCD.SetFontColor(WHITE);
+
+    LCD.WriteLine("Code has begun");
+
+    //wait for CdS cell to start
+    while(CdSCell.Value()>START);
+
+    getLocation();
+
+    //move forward
+    drive(7);
+    Sleep(1.);
+
+    //Check RPS
+    check_y_minus(refY,7);
+    Sleep(1.);
+
+    //turn 90 degrees CCW
+    turn(-90);
+    Sleep(1.);
+
+    //check RPS
+    check_heading(0);
+
+    getLocation();
+
+    //move forward
+    drive(11);
+    Sleep(1.);
+
+    //check RPS
+    check_x_plus(refX,11);
+    Sleep(1.);
+
+    //turn 90 degrees CCW
+    turn(-90);
+    Sleep(1.);
+
+    //check RPS
+    check_heading(90);
+    Sleep(1.);
+
+    //move forward
+    drive(23);
+    Sleep(1.);
+
+    //turn CCW
+    turn(-45);
+    Sleep(1.);
+
+    //move forward
+    drive(14.5);
+    Sleep(1.);
+
+    //turn 90 degrees CW
+    turn(90);
+    Sleep(1.);
+
+    //raise servo
+    liftServo.SetDegree(65);
+
+    //set up fork servo
+    if(fuelType == 1) {
+        forkServo.SetDegree(0);
+    } else {
+        forkServo.SetDegree(180);
+    }
+
+    Sleep(1.);
+
+    //move forward
+    drive(15);
+    Sleep(1.);
+
+    //turn fork servo correct direction
+    if(fuelType == 1) {
+        forkServo.SetDegree(180);
+    } else {
+        forkServo.SetDegree(0);
+    }
+
+    Sleep(1.);
+
+    //move backward
+    drive(-15);
+    Sleep(1.);
+
+    //turn 90 degrees CCW
+    turn(-90);
+    Sleep(1.);
+
+    //move backward
+    drive(-14.5);
+    Sleep(1.);
+
+    //turn CW 45 degrees
+    turn(45);
+    Sleep(1.);
+
+    //move backward
+    drive(-23);
+    Sleep(1.);
+
+
+    //done
+
+
 }
