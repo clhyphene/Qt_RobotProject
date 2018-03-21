@@ -57,7 +57,7 @@ void goHome();
 int motor_percent = 40;
 int left_motor_percent = -motor_percent;
 int right_motor_percent = motor_percent;
-int motor_percent_turn = 30;
+int motor_percent_turn = 34;
 int left_motor_percent_turn = motor_percent_turn;
 int right_motor_percent_turn = -motor_percent_turn;
 float counts;
@@ -261,8 +261,8 @@ void check_x_minus(float x_Ref, float delt_x) //using RPS while robot is in the 
         {
             //pulse the motors for a short duration in the correct direction
 
-            rightMotor.SetPercent(20);
-            leftMotor.SetPercent(20);
+            rightMotor.SetPercent(30);
+            leftMotor.SetPercent(-30);
 
             Sleep(.1);
 
@@ -273,8 +273,8 @@ void check_x_minus(float x_Ref, float delt_x) //using RPS while robot is in the 
         {
             //pulse the motors for a short duration in the correct direction
 
-            rightMotor.SetPercent(-20);
-            leftMotor.SetPercent(-20);
+            rightMotor.SetPercent(-30);
+            leftMotor.SetPercent(30);
 
             Sleep(.1);
 
@@ -301,8 +301,8 @@ void check_x_plus(float x_Ref, float delt_x) //using RPS while robot is in the +
         {
             //pulse the motors for a short duration in the correct direction
 
-            rightMotor.SetPercent(-20);
-            leftMotor.SetPercent(-20);
+            rightMotor.SetPercent(-30);
+            leftMotor.SetPercent(30);
 
             Sleep(.1);
 
@@ -313,8 +313,8 @@ void check_x_plus(float x_Ref, float delt_x) //using RPS while robot is in the +
         {
             //pulse the motors for a short duration in the correct direction
 
-            rightMotor.SetPercent(20);
-            leftMotor.SetPercent(20);
+            rightMotor.SetPercent(30);
+            leftMotor.SetPercent(-30);
 
             Sleep(.1);
 
@@ -341,8 +341,8 @@ void check_y_minus(float y_Ref, float delt_y) //using RPS while robot is in the 
         {
             //pulse the motors for a short duration in the correct direction
 
-            rightMotor.SetPercent(20);
-            leftMotor.SetPercent(20);
+            rightMotor.SetPercent(30);
+            leftMotor.SetPercent(-30);
 
             Sleep(.1);
 
@@ -353,8 +353,8 @@ void check_y_minus(float y_Ref, float delt_y) //using RPS while robot is in the 
         {
             //pulse the motors for a short duration in the correct direction
 
-            rightMotor.SetPercent(-20);
-            leftMotor.SetPercent(-20);
+            rightMotor.SetPercent(-30);
+            leftMotor.SetPercent(30);
 
             Sleep(.1);
 
@@ -381,8 +381,8 @@ void check_y_plus(float y_Ref, float delt_y) //using RPS while robot is in the +
         {
             //pulse the motors for a short duration in the correct direction
 
-            rightMotor.SetPercent(-20);
-            leftMotor.SetPercent(-20);
+            rightMotor.SetPercent(-30);
+            leftMotor.SetPercent(30);
 
             Sleep(.1);
 
@@ -393,8 +393,8 @@ void check_y_plus(float y_Ref, float delt_y) //using RPS while robot is in the +
         {
             //pulse the motors for a short duration in the correct direction
 
-            rightMotor.SetPercent(20);
-            leftMotor.SetPercent(20);
+            rightMotor.SetPercent(30);
+            leftMotor.SetPercent(-30);
 
             Sleep(.1);
 
@@ -922,12 +922,14 @@ void performanceTestFour() {
 
     getLocation();
 
+    //has to add to 10.25
+
     //move forward
-    drive(10.25);
+    drive(8);
     Sleep(1.);
 
     //check RPS
-    check_x_plus(refX,10.25);
+    check_x_plus(refX,8);
     Sleep(1.);
 
     //turn 90 degrees CCW
@@ -938,20 +940,75 @@ void performanceTestFour() {
     check_heading(90);
     Sleep(1.);
 
+    //move backward
+    drive(-4);
+    Sleep(1.);
+
+    float timeStart = TimeNow();
+
+    while(RPS.IsDeadzoneActive() != 2 && TimeNow()-timeStart < 7);
+
+    //move forward
+    drive(4);
+    Sleep(1.);
+
+    //turn 90 degrees CW
+    turn(90);
+    Sleep(1.);
+
+    getLocation();
+
+    //move forward
+    drive(2.25);
+    Sleep(1.);
+
+    //check RPS
+    check_x_plus(refX, 2.25);
+    Sleep(1.);
+
+    //turn 90 degrees CCW
+    turn(-90);
+    Sleep(1.);
+
+    //check RPS
+    check_heading(90);
+    Sleep(1.);
+
+    getLocation();
+
     //move forward
     drive(23);
+    Sleep(1.);
+
+    //check RPS
+    check_y_plus(refY, 21);
     Sleep(1.);
 
     //turn CCW
     turn(-45);
     Sleep(1.);
 
-    //move forward
-    drive(14.5);
+    //check RPS
+    check_heading(135);
     Sleep(1.);
+
+    getLocation();
+
+    //move forward
+    drive(16.5);
+    Sleep(1.);
+
+    //Check RPS
+//    check_y_plus(refY, 11.67);
+//    check_x_minus(refX, 11.67);
+//    Sleep(1.);
 
     //turn 90 degrees CW
     turn(90);
+    Sleep(1.);
+
+    //check RPS
+    check_heading(45);
     Sleep(1.);
 
     //raise servo
@@ -966,9 +1023,16 @@ void performanceTestFour() {
 
     Sleep(1.);
 
+    getLocation();
+
     //move forward
     drive(15);
     Sleep(1.);
+
+    //check RPS
+//    check_x_plus(refX, 10.6);
+//    check_y_plus(refY, 10.6);
+//    Sleep(1.);
 
     //turn fork servo correct direction
     if(fuelType == 1) {
@@ -979,26 +1043,53 @@ void performanceTestFour() {
 
     Sleep(1.);
 
+    getLocation();
+
     //move backward
     drive(-15);
     Sleep(1.);
+
+    //check RPS
+//    check_x_minus(refX, 10.6);
+//    check_y_minus(refY, 10.6);
+//    Sleep(1.);
 
     //turn 90 degrees CCW
     turn(-90);
     Sleep(1.);
 
-    //move backward
-    drive(-14.5);
+    //check RPS
+    check_heading(135);
     Sleep(1.);
+
+    getLocation();
+
+    //move backward
+    drive(-16.5);
+    Sleep(1.);
+
+    //check RPS
+//    check_y_minus(refY, 11.67);
+//    check_x_plus(refX, 11.67);
+//    Sleep(1.);
 
     //turn CW 45 degrees
     turn(45);
     Sleep(1.);
 
+    //check RPS
+    check_heading(90);
+    Sleep(1.);
+
+    getLocation();
+
     //move backward
     drive(-23);
     Sleep(1.);
 
+    //check RPS
+    check_y_minus(refY, 15);
+    Sleep(1.);
 
     //done
 
