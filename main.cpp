@@ -15,8 +15,8 @@
 FEHMotor leftMotor(FEHMotor::Motor0,9);
 FEHMotor rightMotor(FEHMotor::Motor1,9);
 
-DigitalEncoder leftEnc(FEHIO::P0_2);
-DigitalEncoder rightEnc(FEHIO::P0_4);
+DigitalEncoder leftEnc(FEHIO::P0_5);
+DigitalEncoder rightEnc(FEHIO::P0_7);
 
 FEHServo buttonServo(FEHServo::Servo0);
 FEHServo forkServo(FEHServo::Servo2);
@@ -54,7 +54,7 @@ void goHome();
 
 //Global Variables
 //Input standard motor power levels here
-int motor_percent = 45;
+int motor_percent = 40;
 int left_motor_percent = -motor_percent;
 int right_motor_percent = motor_percent;
 int motor_percent_turn = 30;
