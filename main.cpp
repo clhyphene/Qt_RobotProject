@@ -924,12 +924,12 @@ void performanceTestFour() {
 
     //has to add to 10.25
 
-    //move forward
-    drive(8);
+    //move forward (driving east to get over light)
+    drive(8.55);
     Sleep(1.);
 
     //check RPS
-    check_x_plus(refX,8);
+    check_x_plus(refX,8.55);
     Sleep(1.);
 
     //turn 90 degrees CCW
@@ -940,13 +940,20 @@ void performanceTestFour() {
     check_heading(90);
     Sleep(1.);
 
-    //move backward
+    //move backward (driving south to hit buttons)
     drive(-4);
     Sleep(1.);
 
     float timeStart = TimeNow();
 
-    while(RPS.IsDeadzoneActive() != 2 && TimeNow()-timeStart < 7);
+    while(RPS.IsDeadzoneActive() != 2 && TimeNow()-timeStart < 7) {
+        rightMotor.SetPercent(-25);
+        leftMotor.SetPercent(25);
+    }
+    rightMotor.Stop();
+    leftMotor.Stop();
+
+    Sleep(1.);
 
     //move forward
     drive(4);
@@ -958,7 +965,7 @@ void performanceTestFour() {
 
     getLocation();
 
-    //move forward
+    //move forward (driving east towards wall to get in front of ramp)
     drive(2.25);
     Sleep(1.);
 
@@ -994,8 +1001,8 @@ void performanceTestFour() {
 
     getLocation();
 
-    //move forward
-    drive(16.5);
+    //move forward (northwest to get perpendicular with crank)
+    drive(16.8);
     Sleep(1.);
 
     //Check RPS
@@ -1065,7 +1072,7 @@ void performanceTestFour() {
     getLocation();
 
     //move backward
-    drive(-16.5);
+    drive(-17.2);
     Sleep(1.);
 
     //check RPS
