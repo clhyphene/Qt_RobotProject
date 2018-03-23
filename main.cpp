@@ -907,15 +907,15 @@ void performanceTestFour() {
 
     //move forward
     drive(7);
-    Sleep(1.);
+    Sleep(0.5);
 
     //Check RPS
     check_y_minus(refY,7);
-    Sleep(1.);
+    Sleep(0.5);
 
     //turn 90 degrees CCW
     turn(-90);
-    Sleep(1.);
+    Sleep(0.5);
 
     //check RPS
     check_heading(0);
@@ -926,23 +926,23 @@ void performanceTestFour() {
 
     //move forward (driving east to get over light)
     drive(8.55);
-    Sleep(1.);
+    Sleep(0.5);
 
     //check RPS
     check_x_plus(refX,8.55);
-    Sleep(1.);
+    Sleep(0.5);
 
     //turn 90 degrees CCW
     turn(-90);
-    Sleep(1.);
+    Sleep(0.5);
 
     //check RPS
     check_heading(90);
-    Sleep(1.);
+    Sleep(0.5);
 
     //move backward (driving south to hit buttons)
     drive(-4);
-    Sleep(1.);
+    Sleep(0.5);
 
     float timeStart = TimeNow();
 
@@ -953,57 +953,57 @@ void performanceTestFour() {
     rightMotor.Stop();
     leftMotor.Stop();
 
-    Sleep(1.);
+    Sleep(0.5);
 
     //move forward
     drive(4);
-    Sleep(1.);
+    Sleep(0.5);
 
     //turn 90 degrees CW
     turn(90);
-    Sleep(1.);
+    Sleep(0.5);
 
     getLocation();
 
     //move forward (driving east towards wall to get in front of ramp)
     drive(2.25);
-    Sleep(1.);
+    Sleep(0.5);
 
     //check RPS
     check_x_plus(refX, 2.25);
-    Sleep(1.);
+    Sleep(0.5);
 
     //turn 90 degrees CCW
     turn(-90);
-    Sleep(1.);
+    Sleep(0.5);
 
     //check RPS
     check_heading(90);
-    Sleep(1.);
+    Sleep(0.5);
 
     getLocation();
 
     //move forward
     drive(23);
-    Sleep(1.);
+    Sleep(0.5);
 
     //check RPS
     check_y_plus(refY, 21);
-    Sleep(1.);
+    Sleep(0.5);
 
     //turn CCW
     turn(-45);
-    Sleep(1.);
+    Sleep(0.5);
 
     //check RPS
     check_heading(135);
-    Sleep(1.);
+    Sleep(0.5);
 
     getLocation();
 
     //move forward (northwest to get perpendicular with crank)
-    drive(16.8);
-    Sleep(1.);
+    drive(18);
+    Sleep(0.5);
 
     //Check RPS
 //    check_y_plus(refY, 11.67);
@@ -1012,11 +1012,11 @@ void performanceTestFour() {
 
     //turn 90 degrees CW
     turn(90);
-    Sleep(1.);
+    Sleep(0.5);
 
     //check RPS
     check_heading(45);
-    Sleep(1.);
+    Sleep(0.5);
 
     //raise servo
     liftServo.SetDegree(65);
@@ -1033,8 +1033,16 @@ void performanceTestFour() {
     getLocation();
 
     //move forward
-    drive(15);
-    Sleep(1.);
+    drive(10.5);
+    Sleep(0.5);
+
+    //check RPS right before crank
+    check_heading(45);
+    Sleep(0.5);
+
+    //move forward
+    drive(2);
+    Sleep(0.5);
 
     //check RPS
 //    check_x_plus(refX, 10.6);
@@ -1048,13 +1056,13 @@ void performanceTestFour() {
         forkServo.SetDegree(0);
     }
 
-    Sleep(1.);
+    Sleep(1.5);
 
     getLocation();
 
     //move backward
-    drive(-15);
-    Sleep(1.);
+    drive(-14);
+    Sleep(0.5);
 
     //check RPS
 //    check_x_minus(refX, 10.6);
@@ -1063,17 +1071,17 @@ void performanceTestFour() {
 
     //turn 90 degrees CCW
     turn(-90);
-    Sleep(1.);
+    Sleep(0.5);
 
     //check RPS
     check_heading(135);
-    Sleep(1.);
+    Sleep(0.5);
 
     getLocation();
 
     //move backward
     drive(-17.2);
-    Sleep(1.);
+    Sleep(0.5);
 
     //check RPS
 //    check_y_minus(refY, 11.67);
@@ -1082,21 +1090,21 @@ void performanceTestFour() {
 
     //turn CW 45 degrees
     turn(45);
-    Sleep(1.);
+    Sleep(0.5);
 
     //check RPS
     check_heading(90);
-    Sleep(1.);
+    Sleep(0.5);
 
     getLocation();
 
     //move backward
     drive(-23);
-    Sleep(1.);
+    Sleep(0.5);
 
     //check RPS
     check_y_minus(refY, 15);
-    Sleep(1.);
+    Sleep(0.5);
 
     //done
 
