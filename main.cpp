@@ -26,7 +26,6 @@ FEHServo liftServo(FEHServo::Servo4);
 AnalogInputPin CdSCell(FEHIO::P3_7);
 
 //Function Prototypes
-void driveStraight(int percent);
 void resetEncoders();
 void drive(float distance); //using encoders
 void turn(int degrees);
@@ -39,6 +38,7 @@ void check_x_plus(float x_Ref, float delt_x); //using RPS while robot is in the 
 void check_y_minus(float y_Ref, float delt_y); //using RPS while robot is in the -y direction
 void check_y_plus(float y_Ref, float delt_y); //using RPS while robot is in the +y direction
 void check_x_minus(float x_Ref, float delt_x); //using RPS while robot is in the -x direction
+void check_angle_drive(float x_Ref, float y_Ref, float dist); //using RPS while robot is travelling at 45 degree to the axes
 void setup();// runs all prior setup functions
 void setMotorSpeed(int percent);
 void resetMotorSpeed();
@@ -70,28 +70,18 @@ int main(void)
     setup();
 
     //for final
-    //    carJack();
-    //    getWrench();
+        carJack();
+        getWrench();
     //    pushButtons();
     //    dropWrench();
     //    turnCrank();
     //    goHome();
 
-    performanceTestFour();
 
     return 0;
 }
 
 //Functions
-
-void driveStraight(int percent) {
-
-    //************WE COULD MAKE THIS DRIVE UNTIL IT HITS SOMETHING**********
-
-    //Set both motors to same percentage so they move in the same direction at the same speed
-    leftMotor.SetPercent(percent);
-    rightMotor.SetPercent(percent);
-}
 
 void resetEncoders() {
     //Sets both encoders counts to 0
@@ -404,6 +394,29 @@ void check_y_plus(float y_Ref, float delt_y) //using RPS while robot is in the +
     }
 }
 
+void check_angle_drive(float x_Ref, float y_Ref, float dist) {
+
+    if(RPS.X()<0 || RPS.Y()<0) {
+        return;
+    }
+
+    while(sqrt(pow(x_Ref-RPS.X(),2)+pow(y_Ref-RPS.Y(),2)) > dist+1 || sqrt(pow(x_Ref-RPS.X(),2)+pow(y_Ref-RPS.Y(),2)) < dist-1) {
+        if(sqrt(pow(x_Ref-RPS.X(),2)+pow(y_Ref-RPS.Y(),2)) > dist+1) {
+            rightMotor.SetPercent(-30);
+            leftMotor.SetPercent(30);
+
+            Sleep(.1);
+
+            rightMotor.Stop();
+            leftMotor.Stop();
+        } else {
+            rightMotor.SetPercent(30);
+            leftMotor.SetPercent(-30);
+        }
+    }
+
+}
+
 void getLocation() {
     refX = RPS.X();
     refY = RPS.Y();
@@ -448,41 +461,52 @@ void setup() {
 }
 
 void carJack() {
+    //add waiting for 30 seconds
+
+    //wait for 30 seconds in case it misses start light
+    float timeStart = TimeNow();
+
     //wait for CdS cell to start
-    while(CdSCell.Value()>START);
+    while(CdSCell.Value()>START && TimeNow()-timeStart < 30);
 
     getLocation();
 
-    //move forward
+    //move forward S
     drive(7);
-    Sleep(1.);
+    Sleep(.5);
 
     //Check RPS
     check_y_minus(refY, 7);
-    Sleep(1.);
+    Sleep(.5);
 
+    // turn W
     turn(90);
-    Sleep(1.);
+    Sleep(.5);
 
     //Check RPS
     check_heading(180);
-    Sleep(1.);
+    Sleep(.5);
 
     getLocation();
 
-    //move forward
-    drive(8);
-    Sleep(1.);
+    //move forward W
+    drive(5.35);
+    Sleep(.5);
 
     //Check RPS
-    check_x_minus(refX, 8);
-    Sleep(1.);
+    check_x_minus(refX, 5.35);
+    Sleep(.5);
 
+    //turn S
     turn(-90);
-    Sleep(1.);
+    Sleep(.5);
 
     //Check RPS
     check_heading(270);
+    Sleep(.5);
+
+    //raise fork arm
+    liftServo.SetDegree(65);
     Sleep(1.);
 
     forkServo.SetDegree(90);
@@ -490,38 +514,179 @@ void carJack() {
 
     getLocation();
 
-    //move forward
-    drive(4);
-    Sleep(1.);
+    //move forward S
+    drive(9.5);
+    Sleep(.5);
 
     //Check RPS
-    check_y_minus(refY, 4);
-    Sleep(1.);
+    check_y_minus(refY, 9.5);
+    Sleep(.5);
 
     forkServo.SetDegree(180);
     Sleep(1.);
 }
-
+//*********************************************************************************************************
 void getWrench() {
+    getLocation();
 
+    //move backward N
+    drive(-5.25);
+    Sleep(.5);
+
+    //check RPS
+    check_y_plus(refY, 5.25);
+    Sleep(.5);
+
+    //lower fork arm
+    liftServo.SetDegree(180);
+    Sleep(1.);
+
+    forkServo.SetDegree(0);
+    Sleep(1.);
+
+    //turn W
+    turn(90);
+    Sleep(.5);
+
+    //check RPS
+    check_heading(180);
+    Sleep(.5);
+
+    getLocation();
+
+    //move forward W
+    drive(2);
+    Sleep(.5);
+
+    //set motors to lower percent
+    setMotorSpeed(30);
+
+    //move forward W
+    drive(2);
+    Sleep(.5);
+
+    resetMotorSpeed();
+
+    //check RPS
+    check_x_minus(refX, 4);
+    Sleep(.5);
+
+    //raise fork arm
+    liftServo.SetDegree(65);
+    Sleep(1.);
 }
-
+//*********************************************************************************************************
 void pushButtons() {
+    getLocation();
 
+    //move backward E
+    drive(-4);
+    Sleep(.5);
+
+    //check RPS
+    check_x_plus(refX, 4);
+    Sleep(.5);
+
+    //turn S
+    turn(-90);
+    Sleep(.5);
+
+    //check RPS
+    check_heading(270);
+    Sleep(.5);
+
+    getLocation();
+
+    //move backward N
+    drive(-3);
+    Sleep(.5);
+
+    //check RPS
+    check_y_plus(refY, 3);
+    Sleep(.5);
+
+    //turn W
+    turn(90);
+    Sleep(.5);
+
+    //check RPS
+    check_heading(180);
+    Sleep(.5);
+
+    getLocation();
+
+    //move backward E
+    drive(-23);
+    Sleep(.5);
+
+    //check RPS
+    check_x_plus(refX, 23);
+    Sleep(.5);
+
+    //turn N
+    turn(90);
+    Sleep(.5);
+
+    //check RPS
+    check_heading(90);
+    Sleep(.5);
+
+    getLocation();
+
+    //move backward S
+    drive(-2);
+    Sleep(.5);
+
+    //check RPS
+    check_y_minus(refY, 2);
+    Sleep(.5);
+
+    //read CdS cell
+    double lightColor = CdSCell.Value();
+
+    //Red color will be 0, blue will be 1
+    if (lightColor < (REDLIGHT+LIGHTTOL) && lightColor > (REDLIGHT-LIGHTTOL)) {
+        buttonServo.SetDegree(180);
+        LCD.Clear(RED);
+    } else if (lightColor < (BLUELIGHT+LIGHTTOL) && lightColor > (BLUELIGHT-LIGHTTOL)) {
+        buttonServo.SetDegree(-10);
+        LCD.Clear(BLUE);
+    } else {
+        LCD.Clear();
+        LCD.WriteLine("BLUE DEFAULT");
+
+        Sleep(3.0);
+        buttonServo.SetDegree(-10);
+    }
+
+    //move backward S
+    drive(-4.5);
+    Sleep(.5);
+
+    float timeStart = TimeNow();
+
+    while(RPS.IsDeadzoneActive() != 2 && TimeNow()-timeStart < 7) {
+        rightMotor.SetPercent(-25);
+        leftMotor.SetPercent(25);
+    }
+    rightMotor.Stop();
+    leftMotor.Stop();
+
+    Sleep(.5);
 }
-
+//*********************************************************************************************************
 void dropWrench() {
 
 }
-
+//*********************************************************************************************************
 void turnCrank() {
 
 }
-
+//*********************************************************************************************************
 void goHome() {
 
 }
-
+//*********************************************************************************************************
 void performanceTestOne() {
 
     float x, y; //for touch screen
@@ -788,7 +953,7 @@ void performanceTestThree() {
     //Get current location
     x_coordinate = RPS.X();
     y_coordinate = RPS.Y();
-
+//probe
     setMotorSpeed(25);
 
     //move forward 2-3
