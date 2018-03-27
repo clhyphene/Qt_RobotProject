@@ -676,17 +676,218 @@ void pushButtons() {
 }
 //*********************************************************************************************************
 void dropWrench() {
+    getLocation();
 
+    //move forward N
+    drive(4);
+    Sleep(.5);
+
+    //check RPS
+    check_y_plus(refY, 4);
+    Sleep(.5);
+
+    //reset button arm
+    buttonServo.SetDegree(90);
+
+    //turn 90 degrees E
+    turn(90);
+    Sleep(.5);
+
+    //check RPS
+    check_heading(0);
+    Sleep(.5);
+
+    getLocation();
+
+    //move forward E
+    drive(2.25);
+    Sleep(.5);
+
+    //check RPS
+    check_x_plus(refX, 2.25);
+    Sleep(.5);
+
+    //turn 90 degrees N
+    turn(-90);
+    Sleep(.5);
+
+    //check RPS
+    check_heading(90);
+    Sleep(.5);
+
+    getLocation();
+
+    //move forward N
+    drive(23);
+    Sleep(.5);
+
+    //check RPS
+    check_y_plus(refY, 21);
+    Sleep(.5);
+
+    //turn NW
+    turn(-45);
+    Sleep(.5);
+
+    //check RPS
+    check_heading(135);
+    Sleep(.5);
+
+    //move forward NW
+    drive(22);
+    Sleep(.5);
+
+    //check RPS
+    check_angle_drive(refX, refY, 22);
+    Sleep(.5);
+
+    //REcheck heading
+    check_heading(135);
+    Sleep(.5);
+
+    //move forward NW
+    drive(6);
+    Sleep(.5);
+
+    //lower fork arm
+    liftServo.SetDegree(180);
+    Sleep(1.);
 }
 //*********************************************************************************************************
 void turnCrank() {
+    //move backward SE
+    drive(-6);
+    Sleep(.5);
 
+    getLocation();
+
+    //move backward SE with RPS
+    drive(-4);
+    Sleep(.5);
+
+    //check RPS
+    check_angle_drive(refX, refY, 4);
+    Sleep(.5);
+
+    //turn NE
+    turn(90);
+    Sleep(.5);
+
+    //check RPS
+    check_heading(45);
+    Sleep(.5);
+
+    //raise servo
+    liftServo.SetDegree(65);
+
+    //set up fork servo
+    if(fuelType == 1) {
+        forkServo.SetDegree(0);
+    } else {
+        forkServo.SetDegree(180);
+    }
+
+    Sleep(1.);
+
+    getLocation();
+
+    //move forward
+    drive(12.5);
+    Sleep(.5);
+
+    //check RPS
+    check_angle_drive(refX, refY, 12.5);
+    Sleep(.5);
+
+    //turn fork servo correct direction
+    if(fuelType == 1) {
+        forkServo.SetDegree(180);
+    } else {
+        forkServo.SetDegree(0);
+    }
+
+    Sleep(1.5);
 }
 //*********************************************************************************************************
 void goHome() {
+    getLocation();
 
+    //move backward
+    drive(-12.5);
+    Sleep(.5);
+
+    //check RPS
+    check_angle_drive(refX, refY, 12.5);
+    Sleep(.5);
+
+    //turn 90 degrees NW
+    turn(-90);
+    Sleep(.5);
+
+    //check RPS
+    check_heading(135);
+    Sleep(.5);
+
+    getLocation();
+
+    //move backward SE
+    drive(-18);
+    Sleep(.5);
+
+    //check RPS
+    check_angle_drive(refX, refY, 18);
+    Sleep(.5);
+
+    //turn N
+    turn(45);
+    Sleep(.5);
+
+    //check RPS
+    check_heading(90);
+    Sleep(.5);
+
+    getLocation();
+
+    //move backward S
+    drive(-23);
+    Sleep(.5);
+
+    //check RPS
+    check_y_minus(refY, 21);
+    Sleep(.5);
+
+    //turn E
+    turn(90);
+    Sleep(.5);
+
+    //check RPS
+    check_heading(0);
+    Sleep(.5);
+
+    getLocation();
+
+    //move backward W
+    drive(-14);
+    Sleep(.5);
+
+    //check RPS
+    check_x_minus(refX, 14);
+    Sleep(.5);
+
+    //turn S
+    turn(90);
+    Sleep(.5);
+
+    //check RPS
+    check_heading(270);
+    Sleep(.5);
+
+    //move backward N
+    drive(-20);
 }
 //*********************************************************************************************************
+
+//Performance Tests
 void performanceTestOne() {
 
     float x, y; //for touch screen
