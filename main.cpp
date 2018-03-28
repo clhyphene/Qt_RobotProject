@@ -462,7 +462,7 @@ void setup() {
 
     LCD.Clear();
     LCD.WriteLine("Put in Start location");
-    Sleep(3.);
+    Sleep(7.);
 
 }
 
