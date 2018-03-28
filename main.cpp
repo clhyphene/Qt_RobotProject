@@ -72,7 +72,7 @@ int main(void)
     //for final
         carJack();
         getWrench();
-    //    pushButtons();
+        pushButtons();
     //    dropWrench();
     //    turnCrank();
     //    goHome();
@@ -443,20 +443,26 @@ void setup() {
 
     fuelType = RPS.FuelType();
 
-    //    float x, y;
-    //    LCD.Clear();
-    //    LCD.WriteLine("Position Wrench");
+    float x, y;
+    LCD.Clear();
+    LCD.WriteLine("Position Wrench");
 
-    //    while(!LCD.Touch(&x, &y));
+    while(!LCD.Touch(&x, &y));
 
-    //    wrenchX = RPS.X();
-    //    wrenchY = RPS.Y();
+    wrenchX = RPS.X();
+    wrenchY = RPS.Y();
 
-    //    Sleep(1.5);
+    Sleep(1.5);
 
-    //    LCD.Clear();
-    //    LCD.WriteLine("Put in Start location Push to Start");
-    //    while(!LCD.Touch(&x, &y));
+    /*
+    LCD.Clear();
+    LCD.WriteLine("Position Fuel Crank");
+
+    */
+
+    LCD.Clear();
+    LCD.WriteLine("Put in Start location");
+    Sleep(3.);
 
 }
 
@@ -530,18 +536,18 @@ void getWrench() {
     getLocation();
 
     //move backward N
-    drive(-5.25);
+    drive(-(wrenchY-refY-.15));
     Sleep(.5);
 
     //check RPS
-    check_y_plus(refY, 5.25);
+    check_y_plus(refY, (wrenchY-refY-.15));
     Sleep(.5);
 
     //lower fork arm
-    liftServo.SetDegree(180);
+    forkServo.SetDegree(0);
     Sleep(1.);
 
-    forkServo.SetDegree(0);
+    liftServo.SetDegree(180);
     Sleep(1.);
 
     //turn W
@@ -616,11 +622,11 @@ void pushButtons() {
     getLocation();
 
     //move backward E
-    drive(-23);
+    drive(-14.5);
     Sleep(.5);
 
     //check RPS
-    check_x_plus(refX, 23);
+    check_x_plus(refX, 14.5);
     Sleep(.5);
 
     //turn N
@@ -629,16 +635,6 @@ void pushButtons() {
 
     //check RPS
     check_heading(90);
-    Sleep(.5);
-
-    getLocation();
-
-    //move backward S
-    drive(-2);
-    Sleep(.5);
-
-    //check RPS
-    check_y_minus(refY, 2);
     Sleep(.5);
 
     //read CdS cell
@@ -659,9 +655,13 @@ void pushButtons() {
         buttonServo.SetDegree(-10);
     }
 
+    setMotorSpeed(30);
+
     //move backward S
     drive(-4.5);
     Sleep(.5);
+
+    resetMotorSpeed();
 
     float timeStart = TimeNow();
 
