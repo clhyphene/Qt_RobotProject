@@ -73,7 +73,7 @@ int main(void)
         carJack();
         getWrench();
         pushButtons();
-    //    dropWrench();
+        dropWrench();
     //    turnCrank();
     //    goHome();
 
@@ -396,6 +396,9 @@ void check_y_plus(float y_Ref, float delt_y) //using RPS while robot is in the +
 
 void check_angle_drive(float x_Ref, float y_Ref, float dist) {
 
+    LCD.Clear();
+    LCD.WriteLine("Check Angle Drive");
+
     if(RPS.X()<0 || RPS.Y()<0) {
         return;
     }
@@ -412,6 +415,11 @@ void check_angle_drive(float x_Ref, float y_Ref, float dist) {
         } else {
             rightMotor.SetPercent(30);
             leftMotor.SetPercent(-30);
+
+            Sleep(.1);
+
+            rightMotor.Stop();
+            leftMotor.Stop();
         }
     }
 
@@ -496,11 +504,11 @@ void carJack() {
     getLocation();
 
     //move forward W
-    drive(5.35);
+    drive(5);
     Sleep(.5);
 
     //Check RPS
-    check_x_minus(refX, 5.35);
+    check_x_minus(refX, 5);
     Sleep(.5);
 
     //turn S
@@ -521,11 +529,11 @@ void carJack() {
     getLocation();
 
     //move forward S
-    drive(9.5);
+    drive(9.75);
     Sleep(.5);
 
     //Check RPS
-    check_y_minus(refY, 9.5);
+    check_y_minus(refY, 9.75);
     Sleep(.5);
 
     forkServo.SetDegree(180);
@@ -536,11 +544,11 @@ void getWrench() {
     getLocation();
 
     //move backward N
-    drive(-(wrenchY-refY-.15));
+    drive(-(wrenchY-refY-.2));
     Sleep(.5);
 
     //check RPS
-    check_y_plus(refY, (wrenchY-refY-.15));
+    check_y_plus(refY, (wrenchY-refY-.2));
     Sleep(.5);
 
     //lower fork arm
@@ -564,18 +572,18 @@ void getWrench() {
     drive(2);
     Sleep(.5);
 
+    //recheck heading
+    check_heading(180);
+    Sleep(1.);
+
     //set motors to lower percent
     setMotorSpeed(30);
 
     //move forward W
-    drive(2);
+    drive(3);
     Sleep(.5);
 
     resetMotorSpeed();
-
-    //check RPS
-    check_x_minus(refX, 4);
-    Sleep(.5);
 
     //raise fork arm
     liftServo.SetDegree(65);
@@ -604,11 +612,11 @@ void pushButtons() {
     getLocation();
 
     //move backward N
-    drive(-3);
+    drive(-4.5);
     Sleep(.5);
 
     //check RPS
-    check_y_plus(refY, 3);
+    check_y_plus(refY, 4.5);
     Sleep(.5);
 
     //turn W
@@ -622,11 +630,11 @@ void pushButtons() {
     getLocation();
 
     //move backward E
-    drive(-14.5);
+    drive(-14.75);
     Sleep(.5);
 
     //check RPS
-    check_x_plus(refX, 14.5);
+    check_x_plus(refX, 14.75);
     Sleep(.5);
 
     //turn N
@@ -654,6 +662,7 @@ void pushButtons() {
         Sleep(3.0);
         buttonServo.SetDegree(-10);
     }
+    Sleep(1.);
 
     setMotorSpeed(30);
 
@@ -734,11 +743,11 @@ void dropWrench() {
     Sleep(.5);
 
     //move forward NW
-    drive(22);
+    drive(20);
     Sleep(.5);
 
     //check RPS
-    check_angle_drive(refX, refY, 22);
+    check_angle_drive(refX, refY, 20);
     Sleep(.5);
 
     //REcheck heading
@@ -746,7 +755,7 @@ void dropWrench() {
     Sleep(.5);
 
     //move forward NW
-    drive(6);
+    drive(8);
     Sleep(.5);
 
     //lower fork arm
