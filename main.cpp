@@ -7,8 +7,8 @@
 #include <math.h>
 
 #define START 1.5 //define the threshold which signifies the starting light turning on
-#define BLUELIGHT 1.03 //recorded using test code
-#define REDLIGHT 0.42 //recorded using test code
+#define BLUELIGHT 1.94 //recorded using test code
+#define REDLIGHT 0.38 //recorded using test code
 #define LIGHTTOL 0.3 //tolerance for acceptable voltage values from CdS cell
 
 //Global Objects
@@ -61,7 +61,7 @@ int motor_percent_turn = 34;
 int left_motor_percent_turn = motor_percent_turn;
 int right_motor_percent_turn = -motor_percent_turn;
 float counts;
-float wrenchX, wrenchY, buttonX, buttonY;
+float wrenchX, wrenchY, buttonX, buttonY, jackX, jackY;
 float refX, refY;
 int fuelType; //1 if needs to be turned CW 2 for CCW
 float stdSleep = .5;
@@ -476,8 +476,36 @@ void setup() {
 
 
     LCD.Clear();
+    LCD.WriteLine("Position Jack");
+    Sleep(5.);
+
+    liftServo.SetDegree(65);
+    forkServo.SetDegree(90);
+
+
+    while(true) {
+    while(!LCD.Touch(&x, &y));
+
+    jackX = RPS.X();
+    jackY = RPS.Y();
+
+    if(jackX<0) {
+        LCD.Clear();
+        LCD.WriteLine("Position Jack TRY AGAIN");
+        continue;
+    }
+    break;
+    }
+
+    Sleep(.5);
+
+    LCD.Clear();
     LCD.WriteLine("Position buttons");
 
+    Sleep(1.);
+
+    liftServo.SetDegree(180);
+    forkServo.SetDegree(0);
 
     while(true) {
     while(!LCD.Touch(&x, &y));
@@ -499,12 +527,21 @@ void setup() {
 
     LCD.Clear();
     LCD.WriteLine("Put in Start location");
-    Sleep(7.);
+    Sleep(5.);
 
 }
 
 void carJack() {
     //add waiting for 30 seconds
+    float x,y;
+
+    LCD.Clear();
+    LCD.WriteLine("Press for Final Action");
+
+    while(!LCD.Touch(&x, &y));
+
+    LCD.Clear();
+    LCD.WriteLine("Good to GO");
 
     //wait for 30 seconds in case it misses start light
     float timeStart = TimeNow();
@@ -533,11 +570,11 @@ void carJack() {
     getLocation();
 
     //move forward W
-    drive(5.05);
+    drive(refX-jackX);
     Sleep(stdSleep);
 
     //Check RPS
-    check_x_minus(refX, 5.05);
+    check_x_minus(refX, (refX-jackX));
     Sleep(stdSleep2);
 
     //turn S
@@ -557,11 +594,11 @@ void carJack() {
     getLocation();
 
     //move forward S
-    drive(9.60);
+    drive(refY-jackY);
     Sleep(stdSleep);
 
     //Check RPS
-    check_y_minus(refY, 9.60);
+    check_y_minus(refY, (refY-jackY));
     Sleep(stdSleep2);
 
     forkServo.SetDegree(180);
@@ -572,11 +609,11 @@ void getWrench() {
     getLocation();
 
     //move backward N
-    drive(-(wrenchY-refY-.2));
+    drive(-(wrenchY-refY-.8));
     Sleep(stdSleep);
 
     //check RPS
-    check_y_plus(refY, (wrenchY-refY-.2));
+    check_y_plus(refY, (wrenchY-refY-.8));
     Sleep(stdSleep2);
 
     //lower fork arm
@@ -642,11 +679,11 @@ void pushButtons() {
     getLocation();
 
     //move backward N
-    drive(-(buttonY-refY+.35));
+    drive(-(buttonY-refY-.15));
     Sleep(stdSleep);
 
     //check RPS
-    check_y_plus(refY, (buttonY-refY+.35));
+    check_y_plus(refY, (buttonY-refY-.15));
     Sleep(stdSleep2);
 
     //turn W
@@ -660,11 +697,11 @@ void pushButtons() {
     getLocation();
 
     //move backward E
-    drive(-(buttonX-refX));
+    drive(-(buttonX-refX-.45));
     Sleep(stdSleep);
 
     //check RPS
-    check_x_plus(refX, (buttonX-refX));
+    check_x_plus(refX, (buttonX-refX-.45));
     Sleep(stdSleep2);
 
     //turn N
@@ -739,11 +776,11 @@ void dropWrench() {
     getLocation();
 
     //move forward E
-    drive(2);
+    drive(3);
     Sleep(stdSleep);
 
     //check RPS
-    check_x_plus(refX, 2);
+    check_x_plus(refX, 3);
     Sleep(stdSleep2);
 
     //turn 90 degrees N
@@ -757,15 +794,15 @@ void dropWrench() {
     getLocation();
 
     //move forward N
-    drive(21);
+    drive(23);
     Sleep(stdSleep);
 
     //check RPS
-    check_y_plus(refY, 19);
+    check_y_plus(refY, 21);
     Sleep(stdSleep2);
 
     //turn NW
-    turn(-45);
+    turn(-47);
     Sleep(stdSleep);
 
     //check RPS
@@ -773,7 +810,7 @@ void dropWrench() {
     Sleep(stdSleep2);
 
     //move forward NW
-    drive(17);
+    drive(20);
     Sleep(stdSleep);
 
     //REcheck heading
@@ -801,8 +838,8 @@ void turnCrank() {
     Sleep(stdSleep);
 
     //check RPS
-    check_angle_drive(refX, refY, -3);
-    Sleep(stdSleep2);
+//    check_angle_drive(refX, refY, -3);
+//    Sleep(stdSleep2);
 
     //turn NE
     turn(90);
@@ -831,8 +868,8 @@ void turnCrank() {
     Sleep(stdSleep);
 
     //check RPS
-    check_angle_drive(refX, refY, 12.5);
-    Sleep(stdSleep2);
+//    check_angle_drive(refX, refY, 12.5);
+//    Sleep(stdSleep2);
 
     //turn fork servo correct direction
     if(fuelType == 1) {
@@ -852,8 +889,8 @@ void goHome() {
     Sleep(stdSleep);
 
     //check RPS
-    check_angle_drive(refX, refY, 12.5);
-    Sleep(stdSleep2);
+//    check_angle_drive(refX, refY, 12.5);
+//    Sleep(stdSleep2);
 
     //turn 90 degrees NW
     turn(-90);
@@ -870,8 +907,8 @@ void goHome() {
     Sleep(stdSleep);
 
     //check RPS
-    check_angle_drive(refX, refY, 19);
-    Sleep(stdSleep2);
+//    check_angle_drive(refX, refY, 19);
+//    Sleep(stdSleep2);
 
     //turn N
     turn(45);
