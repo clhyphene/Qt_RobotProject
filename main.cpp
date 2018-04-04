@@ -679,11 +679,11 @@ void pushButtons() {
     getLocation();
 
     //move backward N
-    drive(-(buttonY-refY-.15));
+    drive(-(buttonY-refY-.1));
     Sleep(stdSleep);
 
     //check RPS
-    check_y_plus(refY, (buttonY-refY-.15));
+    check_y_plus(refY, (buttonY-refY-.1));
     Sleep(stdSleep2);
 
     //turn W
