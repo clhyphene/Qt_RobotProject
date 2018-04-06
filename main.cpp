@@ -15,8 +15,8 @@
 FEHMotor leftMotor(FEHMotor::Motor0,9);
 FEHMotor rightMotor(FEHMotor::Motor1,9);
 
-DigitalEncoder leftEnc(FEHIO::P0_5);
-DigitalEncoder rightEnc(FEHIO::P0_7);
+DigitalEncoder leftEnc(FEHIO::P0_7);
+DigitalEncoder rightEnc(FEHIO::P1_0);
 
 FEHServo buttonServo(FEHServo::Servo0);
 FEHServo forkServo(FEHServo::Servo2);
@@ -203,8 +203,10 @@ void check_heading(float heading) //using RPS
     LCD.Clear();
     LCD.WriteLine("Check Heading");
 
+    float timeStart = TimeNow();
+
     if (heading == 0) {
-        while(RPS.Heading() >= 0.75 && RPS.Heading() <= 359.25) {
+        while(RPS.Heading() >= 0.75 && RPS.Heading() <= 359.25 && TimeNow()-timeStart<2) {
             if (RPS.Heading() >= 180) {
                 turn(-1);
                 Sleep(.1);
@@ -246,8 +248,10 @@ void check_x_minus(float x_Ref, float delt_x) //using RPS while robot is in the 
     LCD.Clear();
     LCD.WriteLine("Check X minus");
 
+    float timeStart = TimeNow();
+
     //check whether the robot is within an acceptable range
-    while(RPS.X() < x_coordinate - 1 || RPS.X() > x_coordinate + 1)
+    while((RPS.X() < x_coordinate - 1 || RPS.X() > x_coordinate + 1) && TimeNow()-timeStart < 2)
     {
         if(RPS.X() > x_coordinate)
         {
@@ -286,8 +290,10 @@ void check_x_plus(float x_Ref, float delt_x) //using RPS while robot is in the +
     LCD.Clear();
     LCD.WriteLine("Check X plus");
 
+    float timeStart = TimeNow();
+
     //check whether the robot is within an acceptable range
-    while(RPS.X() < x_coordinate - 1 || RPS.X() > x_coordinate + 1)
+    while((RPS.X() < x_coordinate - 1 || RPS.X() > x_coordinate + 1) && TimeNow()-timeStart<2)
     {
         if(RPS.X() > x_coordinate)
         {
@@ -326,8 +332,10 @@ void check_y_minus(float y_Ref, float delt_y) //using RPS while robot is in the 
     LCD.Clear();
     LCD.WriteLine("Check Y minus");
 
+    float timeStart = TimeNow();
+
     //check whether the robot is within an acceptable range
-    while(RPS.Y() < y_coordinate - 1 || RPS.Y() > y_coordinate + 1)
+    while((RPS.Y() < y_coordinate - 1 || RPS.Y() > y_coordinate + 1) && TimeNow()-timeStart<2)
     {
         if(RPS.Y() > y_coordinate)
         {
@@ -366,8 +374,10 @@ void check_y_plus(float y_Ref, float delt_y) //using RPS while robot is in the +
     LCD.Clear();
     LCD.WriteLine("Check Y plus");
 
+    float timeStart = TimeNow();
+
     //check whether the robot is within an acceptable range
-    while(RPS.Y() < y_coordinate - 1 || RPS.Y() > y_coordinate + 1)
+    while((RPS.Y() < y_coordinate - 1 || RPS.Y() > y_coordinate + 1) && TimeNow()-timeStart<2)
     {
         if(RPS.Y() > y_coordinate)
         {
@@ -477,7 +487,7 @@ void setup() {
 
     LCD.Clear();
     LCD.WriteLine("Position Jack");
-    Sleep(5.);
+    Sleep(3.);
 
     liftServo.SetDegree(65);
     forkServo.SetDegree(90);
@@ -594,11 +604,11 @@ void carJack() {
     getLocation();
 
     //move forward S
-    drive(refY-jackY);
+    drive(refY-jackY+.1);
     Sleep(stdSleep);
 
     //Check RPS
-    check_y_minus(refY, (refY-jackY));
+    check_y_minus(refY, (refY-jackY+.1));
     Sleep(stdSleep2);
 
     forkServo.SetDegree(180);
@@ -647,7 +657,7 @@ void getWrench() {
     setMotorSpeed(30);
 
     //move forward W
-    drive(refX-wrenchX+.5);
+    drive(refX-wrenchX+1);
     Sleep(stdSleep);
 
     resetMotorSpeed();
@@ -679,11 +689,11 @@ void pushButtons() {
     getLocation();
 
     //move backward N
-    drive(-(buttonY-refY-.1));
+    drive(-(buttonY-refY-1));
     Sleep(stdSleep);
 
     //check RPS
-    check_y_plus(refY, (buttonY-refY-.1));
+    check_y_plus(refY, (buttonY-refY-1));
     Sleep(stdSleep2);
 
     //turn W
@@ -697,11 +707,11 @@ void pushButtons() {
     getLocation();
 
     //move backward E
-    drive(-(buttonX-refX-.45));
+    drive(-(buttonX-refX-.5));
     Sleep(stdSleep);
 
     //check RPS
-    check_x_plus(refX, (buttonX-refX-.45));
+    check_x_plus(refX, (buttonX-refX-.5));
     Sleep(stdSleep2);
 
     //turn N
@@ -794,11 +804,11 @@ void dropWrench() {
     getLocation();
 
     //move forward N
-    drive(23);
+    drive(22);
     Sleep(stdSleep);
 
     //check RPS
-    check_y_plus(refY, 21);
+    check_y_plus(refY, 20);
     Sleep(stdSleep2);
 
     //turn NW
@@ -903,7 +913,7 @@ void goHome() {
     getLocation();
 
     //move backward SE
-    drive(-19);
+    drive(-18.5);
     Sleep(stdSleep);
 
     //check RPS
@@ -921,11 +931,11 @@ void goHome() {
     getLocation();
 
     //move backward S
-    drive(-21);
+    drive(-19);
     Sleep(stdSleep);
 
     //check RPS
-    check_y_minus(refY, 19);
+    check_y_minus(refY, 17);
     Sleep(stdSleep2);
 
     //turn E
