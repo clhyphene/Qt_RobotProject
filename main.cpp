@@ -43,6 +43,7 @@ void setup();// runs all prior setup functions
 void setMotorSpeed(int percent);
 void resetMotorSpeed();
 void getLocation();
+void drainBattery();
 
 //Final Competition Functions
 void carJack();
@@ -54,7 +55,7 @@ void goHome();
 
 //Global Variables
 //Input standard motor power levels here
-int motor_percent = 40;
+int motor_percent = 43;
 int left_motor_percent = -motor_percent;
 int right_motor_percent = motor_percent;
 int motor_percent_turn = 34;
@@ -64,11 +65,12 @@ float counts;
 float wrenchX, wrenchY, buttonX, buttonY, jackX, jackY;
 float refX, refY;
 int fuelType; //1 if needs to be turned CW 2 for CCW
-float stdSleep = .5;
-float stdSleep2 = .1;
+float stdSleep = .45;
+float stdSleep2 = .07;
 
 int main(void)
 {
+    //drainBattery();
     setup();
 
     //for final
@@ -84,6 +86,16 @@ int main(void)
 }
 
 //Functions
+
+void drainBattery() {
+    float timeStart = TimeNow();
+    while(TimeNow()-timeStart<30) {
+        drive(1);
+        Sleep(.5);
+        drive(-1);
+        Sleep(.5);
+    }
+}
 
 void resetEncoders() {
     //Sets both encoders counts to 0
@@ -604,11 +616,11 @@ void carJack() {
     getLocation();
 
     //move forward S
-    drive(refY-jackY+.1);
+    drive(refY-jackY+.15);
     Sleep(stdSleep);
 
     //Check RPS
-    check_y_minus(refY, (refY-jackY+.1));
+    check_y_minus(refY, (refY-jackY+.15));
     Sleep(stdSleep2);
 
     forkServo.SetDegree(180);
@@ -619,11 +631,11 @@ void getWrench() {
     getLocation();
 
     //move backward N
-    drive(-(wrenchY-refY-.8));
+    drive(-(wrenchY-refY-.35));
     Sleep(stdSleep);
 
     //check RPS
-    check_y_plus(refY, (wrenchY-refY-.8));
+    check_y_plus(refY, (wrenchY-refY-.35));
     Sleep(stdSleep2);
 
     //lower fork arm
@@ -689,11 +701,11 @@ void pushButtons() {
     getLocation();
 
     //move backward N
-    drive(-(buttonY-refY-1));
+    drive(-(buttonY-refY-1.25));
     Sleep(stdSleep);
 
     //check RPS
-    check_y_plus(refY, (buttonY-refY-1));
+    check_y_plus(refY, (buttonY-refY-1.25));
     Sleep(stdSleep2);
 
     //turn W
@@ -736,7 +748,6 @@ void pushButtons() {
         LCD.Clear();
         LCD.WriteLine("BLUE DEFAULT");
 
-        Sleep(3.0);
         buttonServo.SetDegree(-10);
     }
     Sleep(1.);
@@ -804,11 +815,11 @@ void dropWrench() {
     getLocation();
 
     //move forward N
-    drive(22);
+    drive(23);
     Sleep(stdSleep);
 
     //check RPS
-    check_y_plus(refY, 20);
+    check_y_plus(refY, 21);
     Sleep(stdSleep2);
 
     //turn NW
@@ -844,7 +855,7 @@ void turnCrank() {
     getLocation();
 
     //move backward SE with RPS
-    drive(-3);
+    drive(-4);
     Sleep(stdSleep);
 
     //check RPS
@@ -935,8 +946,8 @@ void goHome() {
     Sleep(stdSleep);
 
     //check RPS
-    check_y_minus(refY, 17);
-    Sleep(stdSleep2);
+//    check_y_minus(refY, 17);
+//    Sleep(stdSleep2);
 
     //turn E
     turn(90);
