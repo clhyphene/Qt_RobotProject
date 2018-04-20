@@ -208,7 +208,7 @@ void setMotorSpeed(int percent) {
 
 void check_heading(float heading) //using RPS
 {
-    if(RPS.Heading()<0) {
+    if(RPS.Heading()==0 && heading!=0) {
         return;
     }
 
@@ -669,7 +669,7 @@ void getWrench() {
     setMotorSpeed(30);
 
     //move forward W
-    drive(refX-wrenchX+1);
+    drive(refX-wrenchX+3);
     Sleep(stdSleep);
 
     resetMotorSpeed();
